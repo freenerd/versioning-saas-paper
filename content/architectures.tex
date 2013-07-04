@@ -89,9 +89,12 @@ more flexibility in choosing version, maybe not choose version but choose only f
 
 high cost for abandoning old version to clean code base
 
-if(user.has_version?):
-  do_something()
-end
+\lstset{language=Ruby, caption=code snippet, label=code}
+\begin{lstlisting}
+  if(user.has_version?):
+    do_something()
+  end
+\end{lstlisting}
 
 \subsubsection{Database}
 
@@ -107,10 +110,13 @@ How to version schemas?
 
   Thus versioning has to happen in the backend
 
-  \subparagraph{Different tables for each schema}
-  create table users_v1;
-  create table users_v2;
-  create table users_v3;
+  \paragraph{Different tables for each schema}
+  \lstset{language=SQL, caption=sql, label=sql}
+  \begin{lstlisting}
+    create table users_v1;
+    create table users_v2;
+    create table users_v3;
+  \end{lstlisting}
 
   Pro:
   Works well if not too many versions
@@ -119,7 +125,7 @@ How to version schemas?
   Messy design if many versions
 
 
-  \subparagraph{Pivot tables}
+  \paragraph{Pivot tables}
 
   bild von "An Elastic Multi-tenant Database Schema for Software as a Service"
 
