@@ -28,6 +28,107 @@ bad consolidation factor
 high maintenance cost as operation complexity increases with the number of tenants
 not the spirit of SaaS
 
-\subsection{Shared-Instance 1:1}
+\subsection{Shared-Instance}
 
-\subsection{Shared-Instance 1:n}
+\subsubsection{Frontend}
+  Web application
+  tight coupling between backend and frontend
+  simultaneously versioned
+  versioning concern in backend
+
+  API consumers (e.g. native apps)
+  loose coupling between backend and frontend
+  backend needs to provide different versions of API
+  api consumers choose version
+
+  Frontend API Versioning
+    In URL:
+      http://api.com/v1/resource.json?version=1
+    Accept Header:
+      Accept: application/json+v1
+    Application Flag:
+
+\subsubsection{Backend}
+\paragraph{Shared-Instance 1:1}
+geiles diagram
+
+a product ver = code rev
+
+
+Pro
+Versioning is external to application code
+
+Contra
+heterogeneous deployment
+worse consolidation factor
+intelligent routing layer needed
+forking of code base makes security patches difficult to apply
+
+
+
+\paragraph{Shared-Instance 1:n}
+geiles diagram
+
+
+version choice is on app server
+
+
+Pro
+good consolidation
+homogenous deployment
+more flexibility: fine grained feature selection
+
+Contra
+increased code complexity
+abandoning old versions needs cleanup
+
+
+
+inside of code base are many version checks "if version == 1.4 ..."
+more flexibility in choosing version, maybe not choose version but choose only features
+
+high cost for abandoning old version to clean code base
+
+if(user.has_version?):
+  do_something()
+end
+
+\subsubsection{Database}
+
+\paragraph{Different versions share same schema}
+db is version agnostic
+
+\paragraph{Different versions need separate schemas}
+How to version schemas?
+
+  Database needs to support several schemas for a table at the same time
+
+  No DBMs supporting this is known to us
+
+  Thus versioning has to happen in the backend
+
+  \subparagraph{Different tables for each schema}
+  create table users_v1;
+  create table users_v2;
+  create table users_v3;
+
+  Pro:
+  Works well if not too many versions
+
+  Con:
+  Messy design if many versions
+
+
+  \subparagraph{Pivot tables}
+
+  bild von "An Elastic Multi-tenant Database Schema for Software as a Service"
+
+  reduce dbms more to a key value store
+  as used with salesforce
+
+\paragraph{Migration of data}
+  version is chosen per tenant
+  data migrations need time
+  data migrations might need downtime
+  on-the-fly migrations possible
+
