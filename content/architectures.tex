@@ -1,0 +1,33 @@
+\section{Architecture}
+
+Assumption:
+  Each tenant uses only one version at a time
+
+
+\subsection{Application Stack}
+- Frontend -> Backend -> DB
+  frontend: ui
+  backend: app / business logic
+  db: shared state
+  - user management
+    - Versioning layer
+    - Auth layer
+  engineering deatils: load balancer / caching emitted
+  - ?web server (caching, load balancer)?
+
+
+hat viele geile diagramme aus dem vortrag
+
+\subsection{Multi-Instance}
+
+Not multi-tenant in itself, but usually the most inuitive way to provide saas. good if not too many clients.
+
+multi-tenancy using multi-instance
+though this seems simple from an architectual perspective
+bad consolidation factor
+high maintenance cost as operation complexity increases with the number of tenants
+not the spirit of SaaS
+
+\subsection{Shared-Instance 1:1}
+
+\subsection{Shared-Instance 1:n}

@@ -1,0 +1,61 @@
+\section{Terminology}
+\label{sec:terminology}
+
+Terminology
+
+SaaS
+What is multi tenancy? How does it relate to multi user?
+  multi-user is a subset of multi-tenant
+  every tenant is a multi-user system in itself
+  Multi-tenant =  Multi-User + SLA + Heavily customizable [DELFT]
+Code-Revision / Product-Version
+  - explain PV stop talking about CR afterwards
+  - // api versioning is just small fraction of the application
+  Product version Visible to the user
+  Code revision   Invisible to the user
+
+  Coupling of product version and code revision depends on architecture of application.
+  example for "old" product version: use a specific software not just version 1 2 3 4 5
+  MS office versions
+
+  why only product version?
+  if changes don't affect the user then we don't need to version
+  When we mention 'version', we are talking about product versions.
+
+
+(Frontend:UI/Backend:Busisness Logix/DB)
+  - // how can we provide a versioning for all these layers with minimal cost. where the tenant can choose.
+  - // how can we make sure that everything is in sync and consistent
+  - granularity of versioning depends on how tight stack is coupled
+  - users interface with versioning in frontend (tenant or even user specific)
+  - backend/db is only versioned forward for whole tenant
+  - stick with product version instead of code revision
+- Configuration
+  - variables in database in shared table layout
+- Customization (int.)
+  - code / templating executed in the context of the saas provider
+  - huge changes
+  - // Eyad does not care about config/customization
+  - // predefined columns
+  - // Eyad doesn't care
+  - -> we handle just like configuration
+  Customization (internal)
+  Tenant-specific changes that run within the application context
+  Examples:
+  Templates, Custom DB fields, DSLs
+
+- Extension (ext.)
+  - // E column extension
+  - not focused on marketplace
+  - // truly external extensions are 2 much
+  - // Eyad doesn't care, we don't do
+  - -> we don't care
+  Extension (external)
+  Tenant-specific changes that run outside the application and interface with it over an API
+  Example:
+  Third-party add-ons in a marketplace
+  addon is in a way just a regular customer as it is truly external
+  we only have to consider customization in our architecture
+
+
+
