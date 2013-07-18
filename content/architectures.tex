@@ -5,7 +5,9 @@ In this section we first clarify the \emph{application stack} we are assuming th
 
 One important assumption we make for versioning is, that each tenant and therefore also all users of a tenant use the same version at the same time. Practially this means that each tenant has a dedicated migration point in which they decide to switch their version. This switch affects all their users at the same time. Users aren't allowed to individually choose their version.
 
-\subsection{Application Stack}
+We furthermore assume that alls requests to the SaaS are authenticated, thus there is a user associated with each request. Since we have a tenant-based system, this will likely be the standard.
+
+\subsection{Application stack}
 
 \begin{wrapfigure}{r}{0.4\textwidth}
 \centering
@@ -20,7 +22,7 @@ We assume a separation between the front-end, back-end and database layer. The \
 
 To focus our research, we omitted some details of the stack. First we were not concerned with neither caching nor load balancing. Furthermore we omitted how user management is done, especially with regards to authentication.
 
-\subsection{Multi-Instance}
+\subsection{Multi-instance}
 
 \begin{figure}
 \centering
@@ -38,7 +40,7 @@ Using a multi-instance architecture has the benefits that it is the most 'natura
 
 Versioning-wise the actual application stack is not version-aware and thus can be built without versioning as a concern. Instead versioning is handled on the deployment level. Migrations between versions might then need significant operations engineering effort.
 
-\subsection{Shared-Instance}
+\subsection{Shared-instance}
 
 The shared-instance architecture consist of one software stack deployment that serves all tenants at the same time. This architecture is the one that is generally referred to when talking about SaaS applications, since it uses the economy of scale well due to its high consolidation factor (TODO reference).
 
@@ -64,7 +66,7 @@ We split the \emph{front-end layer} into two categories: a \emph{web-application
 
 In versioning the back-end layer we are exploring two variants: \emph{1:1} and \emph{1:n}.
 
-\paragraph{Shared-Instance with 1:1 mapping}
+\paragraph{Shared-instance with 1:1 mapping}
 TODO: geiles diagram
 
 The \emph{1:1 mapping} depicts that each product version is mapped to one code revision. Figure TODO explains the setup. Thus to support different product versions at the same time, the respective code revisions have to be deployed on different back-end servers. On each request, the user management decides to which back-end servers the request is routed, depending on the tenant the user belongs to.
@@ -82,35 +84,38 @@ The benefit of this approach is, that the versioning is happening outside of the
 % heterogeneous deployment
 % forking of code base makes security patches difficult to apply
 
-\paragraph{1:n}
-geiles diagram
+\paragraph{Shared-instance with 1:n mapping}
+TODO: geiles diagram
 
+The \emph{1:n mapping} depicts that each app server can serve requests for all of the \emph{n} available versions. The choice of which version to serve is on the app server, implemented with feature switches. Listing~\ref{1ncode} shows a code example in Ruby. In the beginning of this section we assumed that every request has a user attached to it. Furthermore we assumed that all users of a tenant share the same version, which leads us to the assumption that the current version for each user will be saved in the backend and be available during runtime.
 
-version choice is on app server
-
-
-Pro
-good consolidation
-homogenous deployment
-more flexibility: fine grained feature selection
-
-Contra
-increased code complexity
-abandoning old versions needs cleanup
-
-
-
-inside of code base are many version checks "if version == 1.4 ..."
-more flexibility in choosing version, maybe not choose version but choose only features
-
-high cost for abandoning old version to clean code base
-
-\lstset{language=Ruby, caption=code snippet, label=code}
+\lstset{language=Ruby, caption=Example code for \emph{1:n mapping} on an applicaiton server, label=1ncode}
 \begin{lstlisting}
-  if(user.has_version?):
+  if(user.has_version?("1.0")):
     do_something()
   end
+  
+  if(user.has_version?("1.1")):
+    do_something_a_bit_different()
+  end
 \end{lstlisting}
+
+The \emph{1:n mapping} approach has several benefits: The consolidation factor is high, since all app servers can serve all requests. The deployment is homogeneous over the app servers, thus making operations easier. Also it is possible to version more fine-grained, not only based on product versions but actually on feature level and even feature version.
+
+On the downside, the feature switches in the code increase code complexity, which might increase development time and introduce bugs. Also the feature switches are spread over the code, and removing them to abandon old versions has needs software developemtn effort and thus is connected with cost.
+
+% Pro
+% good consolidation
+% homogenous deployment
+% more flexibility: fine grained feature selection
+%
+% Contra
+% increased code complexity, might lead to more bugs
+% high cost for abandoning old version to clean code base
+% 
+%
+% inside of code base are many version checks "if version == 1.4 ..."
+% more flexibility in choosing version, maybe not choose version but choose only features
 
 \subsubsection{Database}
 
