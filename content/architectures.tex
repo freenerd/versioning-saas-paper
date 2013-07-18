@@ -9,7 +9,7 @@ One important assumption we make for versioning is, that each tenant and therefo
 
 \begin{wrapfigure}{r}{0.4\textwidth}
 \centering
-\includegraphics[width=0.3\textwidth]{stack.pdf}
+\includegraphics[]{stack.pdf}
 \caption{Simplified Application Stack}
 \label{fig:stack}
 \end{wrapfigure}
@@ -22,13 +22,21 @@ To focus our research, we omitted some details of the stack. First we did were n
 
 \subsection{Multi-Instance}
 
-Not multi-tenant in itself, but usually the most inuitive way to provide saas. good if not too many clients.
+\begin{figure}
+\centering
+\includegraphics[width=\textwidth]{multiinstance.pdf}
+\caption{Example for a version-supporting Multi-Instance Architecture}
+\label{fig:multiinstance}
+\end{figure}
 
-multi-tenancy using multi-instance
-though this seems simple from an architectual perspective
-bad consolidation factor
-high maintenance cost as operation complexity increases with the number of tenants
-not the spirit of SaaS
+In a multi-instance architecture the whole application stack is deployed several times on distinct resources. You can see an example in Figure~\ref{fig:multiinstance}. Usually the multi-instance architecture serves the purpose of provisioning resources for each tenant individually for horizontal scaling (TODO citation) as well as being able to develop a single-tenant application instead of having to do the engineering overhead of developing a multi-tenant application. This approach can also be used for versioning, where we see two variants:
+
+\paragraph{Single instance per tenant} When every tenant has their own application stack instance running, these instances can be versioned by deploying the respective software version on the tentant's instance.
+\paragraph{Single instance per version with multiple tenants} When every instance has a specific version, the instances in turn can be hosts for multiple tenants by using the shared-instance mechanisms explained in the following section.
+
+Using a multi-instance architecture has the benefits that it is the most 'natural way' to provide a SaaS, since the developer does not have to deal with issues concerning multi-tenancy in one instance, like vertical scaling or isolation. Among the drawbacks are that multi-instance has a bad resource consolidation factor, thus if e.g. one tenant uses many resources but another uses none, the unused resources can't be allocated to the spiking tenant easily. Also the maintentance cost increases with the numer of tenants and there is no economy of scale working in favor of the SaaS provider here.
+
+Versioning-wise the actual stack is not version-aware and thus can be built without versioning in mind. Instead versioning is handled on the deployment level. Migrations between versions might then need significant operations engineering effort.
 
 \subsection{Shared-Instance}
 
