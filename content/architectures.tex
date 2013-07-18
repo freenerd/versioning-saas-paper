@@ -60,25 +60,29 @@ We split the \emph{front-end layer} into two categories: a \emph{web-application
   %     Accept: application/json+v1
   %   Application Flag:
 
-\subsubsection{Backend}
-\paragraph{Shared-Instance 1:1}
-geiles diagram
+\subsubsection{Back-end layer}
 
-a product ver = code rev
+In versioning the back-end layer we are exploring two variants: \emph{1:1} and \emph{1:n}.
 
+\paragraph{Shared-Instance with 1:1 mapping}
+TODO: geiles diagram
 
-Pro
-Versioning is external to application code
+The \emph{1:1 mapping} depicts that each product version is mapped to one code revision. Figure TODO explains the setup. Thus to support different product versions at the same time, the respective code revisions have to be deployed on different back-end servers. On each request, the user management decides to which back-end servers the request is routed, depending on the tenant the user belongs to.
 
-Contra
-heterogeneous deployment
-worse consolidation factor
-intelligent routing layer needed
-forking of code base makes security patches difficult to apply
+The benefit of this approach is, that the versioning is happening outside of the application code, thus the code does not have to be version-aware. On the downsides, the consolidation factor of this approach is low, given that the load is split between non-consolidateable versions. This defecit increases with the increase of versions running in parallel. Furthermore this leads to a heterogeneous deployment which is more complex than a homogeneous deployment.  Also this can lead to problems like bugfixes, that if written once have to be merged and deployed into every running version. Also this approach needs an intelligent routing layer (in our example above the user management) which decides on which app server to map which request.
 
+% a product ver = code rev
+%
+% Pro
+% Versioning is external to application code
+%
+% Contra
+% worse consolidation factor
+% intelligent routing layer needed
+% heterogeneous deployment
+% forking of code base makes security patches difficult to apply
 
-
-\paragraph{Shared-Instance 1:n}
+\paragraph{1:n}
 geiles diagram
 
 
