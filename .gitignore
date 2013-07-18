@@ -28,4 +28,4 @@
 *.d
 *.fls
 *.make
-*.pdf
+report.pdf
