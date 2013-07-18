@@ -16,9 +16,9 @@ One important assumption we make for versioning is, that each tenant and therefo
 
 To understand the architecture better, we first want to look at the SaaS application stack as displayed in Figure~\ref{fig:stack}. We derived this stack from our experience with developing SaaS ourselves as well as stacks we have seen in related papers (TODO references).
 
-We assume a separation between the front-end, back-end and database layer. The front-end layer is mainly concerned with the user interface. In a SaaS it will usually be delivered to the user's browser within a request/response cycle. The back-end layer is concerned with the application and business logic. It takes requests from the front-end layer and accordingly communicated with the database layer. The front-end and back-end layers are stateless, because all state is kept in the database layer.
+We assume a separation between the front-end, back-end and database layer. The \emph{front-end layer} is mainly concerned with the user interface. In a SaaS it will usually be delivered to the user's browser within a request/response cycle. Another case for the fron-end layer are native application that communicatie with the SaaS over a webservice API. We handle this more in-depth in Section~\ref{sec:sharedfrontend}. The \emph{back-end layer} is concerned with the application and business logic. It takes requests from the front-end layer and accordingly communicated with the \emph{database layer}. The front-end and back-end layers are stateless (mostly for being able to scale horizaontally). All state is kept in the database layer.
 
-To focus our research, we omitted some details of the stack. First we did were not concerned with caching as well as load balancing. Furthermore we omitted how user management is done, especially with regards to authentication.
+To focus our research, we omitted some details of the stack. First we were not concerned with neither caching nor load balancing. Furthermore we omitted how user management is done, especially with regards to authentication.
 
 \subsection{Multi-Instance}
 
@@ -36,27 +36,29 @@ In a multi-instance architecture the whole application stack is deployed several
 
 Using a multi-instance architecture has the benefits that it is the most 'natural way' to provide a SaaS, since the developer does not have to deal with issues concerning multi-tenancy in one instance, like vertical scaling or isolation. Among the drawbacks are that multi-instance has a bad resource consolidation factor, thus if e.g. one tenant uses many resources but another uses none, the unused resources can't be allocated to the spiking tenant easily. Also the maintentance cost increases with the numer of tenants and there is no economy of scale working in favor of the SaaS provider here.
 
-Versioning-wise the actual stack is not version-aware and thus can be built without versioning in mind. Instead versioning is handled on the deployment level. Migrations between versions might then need significant operations engineering effort.
+Versioning-wise the actual application stack is not version-aware and thus can be built without versioning as a concern. Instead versioning is handled on the deployment level. Migrations between versions might then need significant operations engineering effort.
 
 \subsection{Shared-Instance}
 
-\subsubsection{Frontend}
-  Web application
-  tight coupling between backend and frontend
-  simultaneously versioned
-  versioning concern in backend
+The shared-instance architecture consist of one software stack deployment that serves all tenants at the same time. This architecture is the one that is generally referred to when talking about SaaS applications, since it uses the economy of scale well due to its high consolidation factor (TODO reference).
 
-  API consumers (e.g. native apps)
-  loose coupling between backend and frontend
-  backend needs to provide different versions of API
-  api consumers choose version
+To investigate versioning in the shared-instance architecture, we will individually inspect the layers of the application stack as outlined in the previous section, consisting of the front-end, back-end and database layer. For each layer we will outline how versioning can happen. We are closing this section with a look at migrating between versions.
 
-  Frontend API Versioning
-    In URL:
-      http://api.com/v1/resource.json?version=1
-    Accept Header:
-      Accept: application/json+v1
-    Application Flag:
+\subsubsection{Front-end layer}
+\label{sec:sharedfrontend}
+
+We split the \emph{front-end layer} into two categories: a \emph{web-application} running in the user's browser and an \emph{API consumer} e.g. running on the user's mobile phone.
+
+\paragraph{Web application} In web applications the user's browser is usually reloading the whole web page on each request, which usually stems from an interaction of the user with the system\footnote{We assume that caching works transparently and perfectly as well as "One page applications" reloading their assets automatically ("hot code reload") in case something on the back-end layer changes.}. Thus there is a thight couling between the front-end and the back-end, from which we conclude that they are both versioned simultaneously. Since the front-end software is delivered to the user's browser on each request, the versioning concern can be completely handled on the \emph{back-end layer} as outlined in the next section.
+
+\paragraph{API consumer} To allow programmatic access to the SaaS functionality, SaaS providers usually implement a webservice. A common occurance are HTTP APIs following the REST principles (TODO reference). These APIs allow native applications (e.g. mobile phone applications) or other webservices to build on top of the SaaS. The SaaS and their API consumers are loosly coupled. They follow own product cycles. In case of compatibility breaking changes in the SaaS API, the API consumers have to adapt to the changes and deploy a new version to their users. This might be hard to do e.g. because users might be reluctant to updates, delivery cycles might be too long or the API consumer developer might not have the resources to update their product. This leads us to the conclusion that SaaS APIs should be able to provide several versions of the API at the same time. The API consumer chooses which version of the API they want to use. There are many ways to handle versioning APIs and explaining them in-depth is over the scope of this report. Examples are version numbers in the URL or \emph{Accept Header} (TODO reference) of a request or feature flags for the consumer application in the SaaS (TODO reference).
+
+  % Frontend API Versioning
+  %   In URL:
+  %     http://api.com/v1/resource.json?version=1
+  %   Accept Header:
+  %     Accept: application/json+v1
+  %   Application Flag:
 
 \subsubsection{Backend}
 \paragraph{Shared-Instance 1:1}
@@ -142,7 +144,7 @@ How to version schemas?
   reduce dbms more to a key value store
   as used with salesforce
 
-\paragraph{Migration of data}
+\subsubsection{Migration of data}
   version is chosen per tenant
   data migrations need time
   data migrations might need downtime
