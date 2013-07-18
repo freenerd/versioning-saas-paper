@@ -1,13 +1,23 @@
 \section{Terminology}
 \label{sec:terminology}
 
-Terminology
+\subsection{Multi-Tenancy}
 
-SaaS
-What is multi tenancy? How does it relate to multi user?
-  multi-user is a subset of multi-tenant
-  every tenant is a multi-user system in itself
-  Multi-tenant =  Multi-User + SLA + Heavily customizable [DELFT]
+Commercial Software as a Service Products are usually build for multi-user usage and provided to a large number of clients. As these clients' users need to be isolated from other client's users, each tenant has to be provided with a multi-user system in itself \cite{Chong2006a}. To sell the products to a wide variety of customers they are usually heavily customizable and additionally different Service Level Agreements might be in place between the provider and his customers \cite{Bezemer2010}.
+
+%What is multi tenancy? How does it relate to multi user?
+  %multi-user is a subset of multi-tenant
+  %every tenant is a multi-user system in itself
+  %Multi-tenant =  Multi-User + SLA + Heavily customizable [DELFT]
+\subsection{Version}
+
+When considering verisoning one has to differentiate between do definitios of a Software Version.
+For one thing a Software Version is a certain stage in the release lifecicle of a software.
+Further on a Software Version is a Software Revision and managed by a Version Control system as part of Software Configuration Management \cite{swebook}.
+
+ycle like beta / release
+
+
 Code-Revision / Product-Version
   - explain PV stop talking about CR afterwards
   - // api versioning is just small fraction of the application
@@ -22,40 +32,43 @@ Code-Revision / Product-Version
   if changes don't affect the user then we don't need to version
   When we mention 'version', we are talking about product versions.
 
+In the following we will consider only Product Versions as Code Revisions are only visible to the developers
 
-(Frontend:UI/Backend:Busisness Logix/DB)
-  - // how can we provide a versioning for all these layers with minimal cost. where the tenant can choose.
-  - // how can we make sure that everything is in sync and consistent
-  - granularity of versioning depends on how tight stack is coupled
-  - users interface with versioning in frontend (tenant or even user specific)
-  - backend/db is only versioned forward for whole tenant
-  - stick with product version instead of code revision
-- Configuration
-  - variables in database in shared table layout
-- Customization (int.)
-  - code / templating executed in the context of the saas provider
-  - huge changes
-  - // Eyad does not care about config/customization
-  - // predefined columns
-  - // Eyad doesn't care
-  - -> we handle just like configuration
-  Customization (internal)
-  Tenant-specific changes that run within the application context
-  Examples:
-  Templates, Custom DB fields, DSLs
 
-- Extension (ext.)
-  - // E column extension
-  - not focused on marketplace
-  - // truly external extensions are 2 much
-  - // Eyad doesn't care, we don't do
-  - -> we don't care
-  Extension (external)
-  Tenant-specific changes that run outside the application and interface with it over an API
-  Example:
-  Third-party add-ons in a marketplace
-  addon is in a way just a regular customer as it is truly external
-  we only have to consider customization in our architecture
+
+%(Frontend:UI/Backend:Busisness Logix/DB)
+  %- // how can we provide a versioning for all these layers with minimal cost. where the tenant can choose.
+  %- // how can we make sure that everything is in sync and consistent
+  %- granularity of versioning depends on how tight stack is coupled
+  %- users interface with versioning in frontend (tenant or even user specific)
+  %- backend/db is only versioned forward for whole tenant
+  %- stick with product version instead of code revision
+%- Configuration
+  %- variables in database in shared table layout
+%- Customization (int.)
+  %- code / templating executed in the context of the saas provider
+  %- huge changes
+  %- // Eyad does not care about config/customization
+  %- // predefined columns
+  %- // Eyad doesn't care
+  %- -> we handle just like configuration
+  %Customization (internal)
+  %Tenant-specific changes that run within the application context
+  %Examples:
+  %Templates, Custom DB fields, DSLs
+
+%- Extension (ext.)
+  %- // E column extension
+  %- not focused on marketplace
+  %- // truly external extensions are 2 much
+  %- // Eyad doesn't care, we don't do
+  %- -> we don't care
+  %Extension (external)
+  %Tenant-specific changes that run outside the application and interface with it over an API
+  %Example:
+  %Third-party add-ons in a marketplace
+  %addon is in a way just a regular customer as it is truly external
+  %we only have to consider customization in our architecture
 
 
 
