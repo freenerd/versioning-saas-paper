@@ -1,22 +1,24 @@
 \section{Architecture}
+\label{sec:architecture}
 
-Assumption:
-  Each tenant uses only one version at a time
+In this section we first clarify the \emph{application stack} we are assuming the SaaS application to have. Then we explain the different architectural approaches to implement versioning of SaaS, with \emph{multi-instance} as well as \emph{shared-instance} on the different application stack layers.
 
+One important assumption we make for versioning is, that each tenant and therefore also all users of a tenant use the same version at the same time. Practially this means that each tenant has a dedicated migration point in which they decide to switch their version. This switch affects all their users at the same time. Users aren't allowed to individually choose their version.
 
 \subsection{Application Stack}
-- Frontend -> Backend -> DB
-  frontend: ui
-  backend: app / business logic
-  db: shared state
-  - user management
-    - Versioning layer
-    - Auth layer
-  engineering deatils: load balancer / caching emitted
-  - ?web server (caching, load balancer)?
 
+\begin{wrapfigure}{r}{0.4\textwidth}
+\centering
+\includegraphics[width=0.3\textwidth]{stack.pdf}
+\caption{Simplified Application Stack}
+\label{fig:stack}
+\end{wrapfigure}
 
-hat viele geile diagramme aus dem vortrag
+To understand the architecture better, we first want to look at the SaaS application stack as displayed in Figure~\ref{fig:stack}. We derived this stack from our experience with developing SaaS ourselves as well as stacks we have seen in related papers (TODO references).
+
+We assume a separation between the front-end, back-end and database layer. The front-end layer is mainly concerned with the user interface. In a SaaS it will usually be delivered to the user's browser within a request/response cycle. The back-end layer is concerned with the application and business logic. It takes requests from the front-end layer and accordingly communicated with the database layer. The front-end and back-end layers are stateless, because all state is kept in the database layer.
+
+To focus our research, we omitted some details of the stack. First we did were not concerned with caching as well as load balancing. Furthermore we omitted how user management is done, especially with regards to authentication.
 
 \subsection{Multi-Instance}
 
