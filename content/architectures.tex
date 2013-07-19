@@ -46,14 +46,14 @@ The shared-instance architecture consist of one software stack deployment that s
 
 To investigate versioning in the shared-instance architecture, we will individually inspect the layers of the application stack as outlined in the previous section, consisting of the front-end, back-end and database layer. For each layer we will outline how versioning can happen. We are closing this section with a look at migrating between versions.
 
-\subsubsection{Front-end layer}
+\subsection{Shared-instance: Front-end layer}
 \label{sec:sharedfrontend}
 
 We split the \emph{front-end layer} into two categories: a \emph{web-application} running in the user's browser and an \emph{API consumer} e.g. running on the user's mobile phone.
 
-\paragraph{Web application} In web applications the user's browser is usually reloading the whole web page on each request, which usually stems from an interaction of the user with the system\footnote{We assume that caching works transparently and perfectly as well as "One page applications" reloading their assets automatically ("hot code reload") in case something on the back-end layer changes.}. Thus there is a thight couling between the front-end and the back-end, from which we conclude that they are both versioned simultaneously. Since the front-end software is delivered to the user's browser on each request, the versioning concern can be completely handled on the \emph{back-end layer} as outlined in the next section.
+\subsubsection{Web application} In web applications the user's browser is usually reloading the whole web page on each request, which usually stems from an interaction of the user with the system\footnote{We assume that caching works transparently and perfectly as well as "One page applications" reloading their assets automatically ("hot code reload") in case something on the back-end layer changes.}. Thus there is a thight couling between the front-end and the back-end, from which we conclude that they are both versioned simultaneously. Since the front-end software is delivered to the user's browser on each request, the versioning concern can be completely handled on the \emph{back-end layer} as outlined in the next section.
 
-\paragraph{API consumer} To allow programmatic access to the SaaS functionality, SaaS providers usually implement a webservice. A common occurance are HTTP APIs following the REST principles (TODO reference). These APIs allow native applications (e.g. mobile phone applications) or other webservices to build on top of the SaaS. The SaaS and their API consumers are loosly coupled. They follow own product cycles. In case of compatibility breaking changes in the SaaS API, the API consumers have to adapt to the changes and deploy a new version to their users. This might be hard to do e.g. because users might be reluctant to updates, delivery cycles might be too long or the API consumer developer might not have the resources to update their product. This leads us to the conclusion that SaaS APIs should be able to provide several versions of the API at the same time. The API consumer chooses which version of the API they want to use. There are many ways to handle versioning APIs and explaining them in-depth is over the scope of this report. Examples are version numbers in the URL or \emph{Accept Header} (TODO reference) of a request or feature flags for the consumer application in the SaaS (TODO reference).
+\subsubsection{API consumer} To allow programmatic access to the SaaS functionality, SaaS providers usually implement a webservice. A common occurance are HTTP APIs following the REST principles (TODO reference). These APIs allow native applications (e.g. mobile phone applications) or other webservices to build on top of the SaaS. The SaaS and their API consumers are loosly coupled. They follow own product cycles. In case of compatibility breaking changes in the SaaS API, the API consumers have to adapt to the changes and deploy a new version to their users. This might be hard to do e.g. because users might be reluctant to updates, delivery cycles might be too long or the API consumer developer might not have the resources to update their product. This leads us to the conclusion that SaaS APIs should be able to provide several versions of the API at the same time. The API consumer chooses which version of the API they want to use. There are many ways to handle versioning APIs and explaining them in-depth is over the scope of this report. Examples are version numbers in the URL or \emph{Accept Header} (TODO reference) of a request or feature flags for the consumer application in the SaaS (TODO reference).
 
   % Frontend API Versioning
   %   In URL:
@@ -62,11 +62,11 @@ We split the \emph{front-end layer} into two categories: a \emph{web-application
   %     Accept: application/json+v1
   %   Application Flag:
 
-\subsubsection{Back-end layer}
+\subsection{Shared-instance: Back-end layer}
 
 In versioning the back-end layer we are exploring two variants: \emph{1:1} and \emph{1:n}.
 
-\paragraph{Shared-instance with 1:1 mapping}
+\subsubsection{Shared-instance with 1:1 mapping}
 TODO: geiles diagram
 
 The \emph{1:1 mapping} depicts that each product version is mapped to one code revision. Figure TODO explains the setup. Thus to support different product versions at the same time, the respective code revisions have to be deployed on different back-end servers. On each request, the user management decides to which back-end servers the request is routed, depending on the tenant the user belongs to.
@@ -84,7 +84,7 @@ The benefit of this approach is, that the versioning is happening outside of the
 % heterogeneous deployment
 % forking of code base makes security patches difficult to apply
 
-\paragraph{Shared-instance with 1:n mapping}
+\subsubsection{Shared-instance with 1:n mapping}
 TODO: geiles diagram
 
 The \emph{1:n mapping} depicts that each app server can serve requests for all of the \emph{n} available versions. The choice of which version to serve is on the app server, implemented with feature switches. Listing~\ref{1ncode} shows a code example in Ruby. In the beginning of this section we assumed that every request has a user attached to it. Furthermore we assumed that all users of a tenant share the same version, which leads us to the assumption that the current version for each user will be saved in the backend and be available during runtime.
@@ -94,7 +94,7 @@ The \emph{1:n mapping} depicts that each app server can serve requests for all o
   if(user.has_version?("1.0")):
     do_something()
   end
-  
+
   if(user.has_version?("1.1")):
     do_something_a_bit_different()
   end
@@ -102,7 +102,7 @@ The \emph{1:n mapping} depicts that each app server can serve requests for all o
 
 The \emph{1:n mapping} approach has several benefits: The consolidation factor is high, since all app servers can serve all requests. The deployment is homogeneous over the app servers, thus making operations easier. Also it is possible to version more fine-grained, not only based on product versions but actually on feature level and even feature version.
 
-On the downside, the feature switches in the code increase code complexity, which might increase development time and introduce bugs. Also the feature switches are spread over the code, and removing them to abandon old versions has needs software developemtn effort and thus is connected with cost.
+On the downside, the feature switches in the code increase code complexity, which might increase development time and increases the probability of bugs. Also the feature switches are spread over the code and removing them needs software development effort. Thus abandoning old versions is connected with extra cost.
 
 % Pro
 % good consolidation
@@ -112,50 +112,71 @@ On the downside, the feature switches in the code increase code complexity, whic
 % Contra
 % increased code complexity, might lead to more bugs
 % high cost for abandoning old version to clean code base
-% 
+%
 %
 % inside of code base are many version checks "if version == 1.4 ..."
 % more flexibility in choosing version, maybe not choose version but choose only features
 
-\subsubsection{Database}
+\subsection{Shared-instance: Database}
 
-\paragraph{Different versions share same schema}
-db is version agnostic
+The database is where state is kept. We assume that the database is in the style of a relational database, in that it keeps the data in tables with specified schemas to ensure the format and validitiy of the data.
 
-\paragraph{Different versions need separate schemas}
-How to version schemas?
+In this section we will differentiate between two major cases reagarding the database when versioning SaaS: \emph{Different versions share the same datbase schema} and \emph{different versions need separate schemas}.
 
-  Database needs to support several schemas for a table at the same time
+\subsubsection{Different versions share same schema}
+(TODO nice diagram?)
 
-  No DBMs supporting this is known to us
+When different versions share the same database schema, the database is actually agnostic to versioning. The changes of the versions happen in the other layers and thus never propagate down to the database.
 
-  Thus versioning has to happen in the backend
+\subsubsection{Different versions need separate schemas}
+(TODO nice diagram?)
 
-  \paragraph{Different tables for each schema}
-  \lstset{language=SQL, caption=sql, label=sql}
-  \begin{lstlisting}
-    create table users_v1;
-    create table users_v2;
-    create table users_v3;
-  \end{lstlisting}
+When schemas change between versions, the database shares the concern of versioning. Given that we assume we are dealing with a schema-based database, the question is: How can database schemas be versioned? How can a database support several schemas for the same data at the same time?
 
-  Pro:
-  Works well if not too many versions
+In our research we did not found a database that prodvides version-aware schemas. We investigate this option more in Section~\ref{sec:futurework}.
 
-  Con:
-  Messy design if many versions
+% TODO materialized views? i remember some research about making them writeable as well ...
 
+Since the database can not handle the versioning concern, the responsibility is pushed up in the stack to the back-end layer. Next we will investigate two approaches for that.
 
-  \paragraph{Pivot tables}
+\paragraph{Different tables for each schema}
 
-  bild von "An Elastic Multi-tenant Database Schema for Software as a Service"
+To store different schemas, a new database or table can be created for each version. An example with different tables can be seen in Listing~\ref{differenttablessql}. Each tenant is on a specific version, thus their data is stored in the table for their respective version.
 
-  reduce dbms more to a key value store
-  as used with salesforce
+\lstset{language=SQL, caption=sql, label=differenttablessql}
+\begin{lstlisting}
+  create table users_v1;
+  create table users_v2;
+  create table users_v3;
+\end{lstlisting}
+
+% TODO: Ich bin von den Pro/Cons nicht so richtig überzeugt
+% Pro:
+% Works well if not too many versions
+%
+% Con:
+% Messy design if many versions
+
+\paragraph{Pivot tables}
+
+\begin{figure}
+\centering
+\includegraphics[width=\textwidth]{pivot.png}
+\caption{Schema of pivot tables as shown in \cite{Yaish2011}}
+\label{fig:pivot}
+\end{figure}
+
+Pivot tables as explained in \cite{Yaish2011} \cite{Aulbach2011} \cite{Weissman2009} follow the idea of not using a fixed schema in the database but keeping a flexible schema in the application. The database gets reduced to a more simple key-value store. An example can be seen in Figure~\ref{fig:pivot}.
 
 \subsubsection{Migration of data}
-  version is chosen per tenant
-  data migrations need time
-  data migrations might need downtime
-  on-the-fly migrations possible
 
+When a tenant decides that they want to move to a new version and the version switch changes the schema, then the data of the tenant has to be migrated from the old to the new schema. Next we will describe two ways for running migrations:
+
+\paragraph{Batch-processing migration} The data is migrated in one go. Depending on the database management system, the schema changes and the amount of data, this process might take significant time. Depending on the algorithm used to execute the migration, the database might be completely unavailable for that tenant's users during the migration or be in a read-only state.
+
+\paragraph{On-the-fly migration} The data is migrated when it is requested or written. This could mean that clusters of data are migrated in batch (e.g. a user is migrated when she logs in) or are migrated row-by-row.
+
+% version is chosen per tenant
+% data migrations need time
+% data migrations might need downtime
+% on-the-fly migrations possible
