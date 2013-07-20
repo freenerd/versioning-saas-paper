@@ -103,11 +103,11 @@ The \emph{1:n mapping} depicts that each app server can serve requests for all o
 
 \lstset{language=Ruby, caption=Example code for \emph{1:n mapping} on an applicaiton server, label=1ncode}
 \begin{lstlisting}
-  if(user.has_version?("1.0")):
+  if user.has_version?("1.0")
     do_something()
   end
 
-  if(user.has_version?("1.1")):
+  if user.has_version?("1.1")
     do_something_a_bit_different()
   end
 \end{lstlisting}
