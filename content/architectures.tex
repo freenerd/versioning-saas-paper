@@ -8,6 +8,7 @@ One important assumption we make for versioning is, that each tenant and therefo
 We furthermore assume that alls requests to the SaaS are authenticated, thus there is a user associated with each request. Since we have a tenant-based system, this will likely be the standard.
 
 \subsection{Application stack}
+\label{sec:stack}
 
 \begin{wrapfigure}{r}{0.4\textwidth}
 \centering
@@ -130,6 +131,7 @@ On the downside, the feature switches in the code increase code complexity, whic
 % more flexibility in choosing version, maybe not choose version but choose only features
 
 \subsection{Shared-instance: Database}
+\label{sec:database}
 
 The database is where state is kept. We assume that the database is in the style of a relational database, in that it keeps the data in tables with specified schemas to ensure the format and validitiy of the data.
 

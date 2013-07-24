@@ -1,8 +1,12 @@
 \section{Future Work (Johan)}
 \label{sec:futurework}
 
-Version-aware database management systems (DBMS)
+In our research we made two assumptions that simplified our setup but could yield interesting future work:
 
-Switching versions per user. We assumed for our architecture that a tenant chooses the version for all their users at the same time \ref{sec:architecture}. Future research should investigate how versioning on the user-level could be implemented.
+\paragraph{Switching versions per user} In Section~\ref{sec:stack} we assumed that a tenant chooses the version for all their users at the same time. Future research should investigate how versioning on the user-level could be implemented, especially when schema changes are involved.
 
-One technique to build SaaS that serve many users is to use caching. We have omitted caching in this report but think it should be investigated.
+\paragraph{Caching} To build a SaaS that is able to serve many users, caching is an essential technique. In our research we omitted caching. It would be interesting to investigate caching more with regards to versioning, especially if cached objects have to be invalidated during version changes or not.
+
+One of our insights from Section~\ref{sec:database} was that versioning with schema changes can currently not be implemented as a concern on the data storage layer, but has to be handled by the application layer. Depending on the implementation this might also mean that the schema is not kept by the DBMS anymore, but rather by the application layer. This might lead to the DBMS not benefiting from features like indices anymore, which impedes the performance of the DBMS.
+
+We believe that further research in the direction of version-aware database management systems could be interesting future work. An example would be that the application could specify via a SQL extension which version of a table they want to access. The DBMS would then take care of loading the correct schema as well as arrange the base data itself, thus relieving the application layer of that concern.
