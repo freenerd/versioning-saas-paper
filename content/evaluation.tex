@@ -1,3 +1,14 @@
 \section{Evaluation (Johan \& Max)}
 
-We evaluated our findings of the previous sections with our experience in developing SaaS systems ourselves.
+We evaluate our findings of the previous sections with our experience in developing SaaS systems ourselves.
+
+\paragraph{Project A} was a multi-user SaaS with over 10 million registered users. It served a website as well as a REST API from a monolothic Ruby on Rails installation backed by MySQL servers as well as more satelite services around that. At one point it was decided to build a new version of the website, mostly because there were fundamental changes in the user interface as well as the feature set. A team was elected to work on the new website, while another team continued to maintain the old website. Furthermore it was decided to build the new version as an API client on top of the current REST API. A new code base with own deployment independent of the current website was built. During development it showed that the REST API did not support all features needed by the new version, thus the REST API was extended to support new endpoints. Also some schema changes were necessary, but they were only additions to existing tables or new tables. The Ruby on Rails application used Active Record as an ORM to access the database. Active Record handles additions to the schema in a forward-compatible way. Thus the changes needed for the new website were 100\% backwards compatible with the old website.
+
+Once deployed, the new version was gradually rolled out the the users. Users were able to opt-in to the new version, but also switch back to the old version. Annonymous users were intially always served the old version, but once the new version was officially launched all annonymous users were switched to the new version. The respective version per user was saved in a cookie. When a user requested the website, the web server receiving the request deceided based on the cookie information, to which application server the request should be routed.
+
+The versioning in this example happened outside of our architecture proposals in the previous Section~\ref{sec:architecture}, since the new version became an API client of the old version. Still, one of the insights it validates is that between versions schema changes are possbile if they happen in a compatible way.
+
+% TODO References
+
+\paragraph{Project B} Max
+

@@ -137,21 +137,21 @@ The database is where state is kept. We assume that the database is in the style
 
 In this section we will differentiate between two major cases reagarding the database when versioning SaaS: \emph{Different versions share the same datbase schema} and \emph{different versions need separate schemas}.
 
-\subsubsection{Different versions share same schema}
+\subsubsection{Different versions share a compatible schema}
 % TODO nice diagram?
 
-When different versions share the same database schema, the database is actually agnostic to versioning. The changes of the versions happen in the other layers and thus never propagate down to the database.
+When different versions share the same database schema, the database is actually agnostic to versioning. The changes of the versions happen in the other layers and thus never propagate down to the database. The same happens if changes are needed for one version, but the changes are compatible with the other versions. An example for this is the addition of new columns or tables. These can usually be ignored by versions that don't need these columns or tables, thus enabling compatiblity with the changed schema.
 
-\subsubsection{Different versions need separate schemas}
+\subsubsection{Different versions need incompatible schemas}
 % TODO nice diagram?
 
-When schemas change between versions, the database shares the concern of versioning. Given that we assume we are dealing with a schema-based database management systems, the question is: How can database schemas be versioned? How can a database support several schemas for the same data at the same time?
+When schemas change between versions in an incompatible way, the database shares the concern of versioning. Given that we assume we are dealing with a schema-based database management systems, the question is: How can database schemas be versioned? How can a database support several schemas for the same data at the same time?
 
-In our research we did not found a database that prodvides version-aware schemas. We investigate this option more in Section~\ref{sec:futurework}.
+In our research we did not find a database that prodvides version-aware schemas. We investigate this option more in Section~\ref{sec:futurework}.
 
 % TODO materialized views? i remember some research about making them writeable as well ...
 
-Since the database can not handle the versioning concern, the responsibility is pushed up in the stack to the back-end layer. Next we will investigate two approaches for that.
+Since the database can not handle the versioning concern, the responsibility is pushed up in the stack to the back-end layer again. Next we will investigate two approaches for that.
 
 \paragraph{Different tables for each schema}
 
