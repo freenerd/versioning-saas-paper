@@ -115,7 +115,7 @@ The benefit of this approach is, that the versioning is happening outside of the
 \begin{figure}
 \centering
 \includegraphics[width=\textwidth]{sharedinstance1n.pdf}
-\caption{Example for a shared-instance architecture with 1:n mapping}
+\caption{Example for a shared-instance architecture with mapping each back end server to a code revision which in turn can server several product versions}
 \label{fig:sharedinstance1n}
 \end{figure}
 
@@ -153,29 +153,27 @@ On the downside, the feature flags in the code increase code complexity, which m
 \subsection{Shared-instance: Database}
 \label{sec:database}
 
-The database is where state is kept. We assume that the database is in the style of a relational database, in that it keeps the data in tables with specified schemas to ensure the format and validitiy of the data.
+The database is where state is kept. We assume that the database is a relational database, in that it keeps the data in tables with specified schemas to ensure the format and validity of the data.
 
-In this section we will differentiate between two major cases reagarding the database when versioning SaaS: \emph{Different versions share the same datbase schema} and \emph{different versions need separate schemas}.
+In this section we will differentiate between two major cases regarding the database when versioning SaaS: \emph{Different versions share a compatible database schema} and \emph{different versions require different incompatible schemas}.
 
 \subsubsection{Different versions share a compatible schema}
 % TODO nice diagram?
 
-When different versions share the same database schema, the database is actually agnostic to versioning. The changes of the versions happen in the other layers and thus never propagate down to the database. The same happens if changes are needed for one version, but the changes are compatible with the other versions. An example for this is the addition of new columns or tables. These can usually be ignored by versions that don't need these columns or tables, thus enabling compatiblity with the changed schema.
+When different versions share the same database schema, the database is actually agnostic to versioning. The changes of the versions happen in the other layers and thus never propagate down to the database. The same happens if changes are needed for one version, but the changes are compatible with the other versions. An example for this is the addition of new columns or tables. These can usually be ignored by versions that don't need these columns or tables, thus enabling compatibility with the changed schema.
 
-\subsubsection{Different versions need incompatible schemas}
+\subsubsection{Different versions require different incompatible schemas}
 % TODO nice diagram?
 
-When schemas change between versions in an incompatible way, the database shares the concern of versioning. Given that we assume we are dealing with a schema-based database management systems, the question is: How can database schemas be versioned? How can a database support several schemas for the same data at the same time?
+When schemas change between versions in an incompatible way, the database layer has to be versioned. Given that we assume we are dealing with a schema-enforcing database management systems (DBMS), the question is: How can schemas be versioned? How can a database support several schemas for the same data at the same time?
 
-In our research we did not find a database that prodvides version-aware schemas. We investigate this option more in Section~\ref{sec:futurework}.
+The problem is that current DBMS do always only support one schema at a time. In our research we did not find a DBMS that provides version-aware schemas. We investigate this option more in Section~\ref{sec:futurework}.
 
-% TODO materialized views? i remember some research about making them writeable as well ...
-
-Since the database can not handle the versioning concern, the responsibility is pushed up in the stack to the back end layer again. Next we will investigate two approaches for that.
+Since the database layer can not handle the versioning concern, the responsibility lies with the back end layer. Next we will investigate two approaches for that.
 
 \paragraph{Different tables for each schema}
 
-To store different schemas, a new database or table can be created for each version. An example with different tables can be seen in Listing~\ref{differenttablessql}. Each tenant is on a specific version, thus their data is stored in the table for their respective version.
+To store different schemas, a new database or table can be created for each version. An example with different tables can be seen in Listing~\ref{differenttablessql}. Each tenant is on a specific version, thus their data is stored in the corresponding table for their respective version.
 
 \lstset{language=SQL, caption=sql, label=differenttablessql}
 \begin{lstlisting}
@@ -183,6 +181,8 @@ To store different schemas, a new database or table can be created for each vers
   create table users_v2;
   create table users_v3;
 \end{lstlisting}
+
+The problem with approach is that migrations between versions require moving the data of a whole tenant from the tables of one version to the tables of another version. This might include columns or even whole tables that were not changed between versions. This copying introduces a significant overhead which  current DBMS are not optimized for.
 
 % TODO: Ich bin von den Pro/Cons nicht so richtig überzeugt
 % Pro:
@@ -200,14 +200,14 @@ To store different schemas, a new database or table can be created for each vers
 \label{fig:pivot}
 \end{figure}
 
-Pivot tables as explained in \cite{Yaish2011} \cite{Aulbach2011} \cite{Weissman2009} follow the idea of not using a fixed schema in the database but keeping a flexible schema in the application. The database gets reduced to a more simple key-value store. An example can be seen in Figure~\ref{fig:pivot}.
+Pivot tables as explained in \cite{Yaish2011} \cite{Aulbach2011} \cite{Weissman2009} follow the idea of not using a fixed schema in the database but keeping a flexible schema in the application. An example table layout can be seen in Figure~\ref{fig:pivot}. With pivot tables the DBMS is used more like a key-value store and in turn the application has to handle concerns that traditionally belonged to the DBMS, like query optimization or caching.
 
 \subsubsection{Migration of data}
 
-When a tenant decides that they want to move to a new version and the version switch changes the schema, then the data of the tenant has to be migrated from the old to the new schema. Next we will describe two ways for running migrations:
+When a tenant decides to move to a new version and the new version requires a schema change, then the data of the tenant has to be migrated from the old to the new schema. Next we will describe two ways for running these migrations:
 
-\paragraph{Batch-processing migration} The data is migrated in one go. Depending on the database management system, the schema changes and the amount of data, this process might take significant time. Depending on the algorithm used to execute the migration, the database might be completely unavailable for that tenant's users during the migration or be in a read-only state.
-
+\paragraph{Batch-processing migration} The data is migrated in one go. Depending on the database management system, the schema changes and the amount of data, this process might take significant time. Depending on the algorithm used to execute the migration, the database and therefore the whole application might be completely unavailable or in read-only state for the tenant's users during the migration.
+%TODO TO TALK ABOUT
 \paragraph{On-the-fly migration} The data is migrated when it is requested or written. This could mean that clusters of data are migrated in batch (e.g. a user is migrated when she logs in) or are migrated row-by-row.
 
 % version is chosen per tenant
