@@ -1,25 +1,23 @@
+%!TEX root = ../report.tex
+
 \section{Introduction (Max)}
 
-The recent trend of providing Software as a Service instead of via the classical retail channels has changed the way that this software is versioned.
-Earlier software was released infrequently and the customer would choose when to switch to a different version after it was released.
-Nowadays a Software as a Service provider is able to release updates to the provided software continuosly and deploy them without further action of the customer aswell.
+The recent trend of providing Software as Software as a Service (SaaS) instead via the classical retail channels has changed the way that software is versioned. Previously software was released infrequently and the customer would choose when to switch to a different version after it was released. But today a Software as a Service provider is able to release software updates continuously and deploy them without further action from the customer.
 
-Improving upon that, providers may even choose to provide multiple versions at the same time in order to compare these.
-For instance changes to the user-interface are, especially by web companies, tried out in A/B-split tests.
-In these a subset of the providers customers is confronted with a different version of the interface which has only one specific difference.
-This enables the provider to measure statistically which influence this difference has on his business based on the behaviour of the different split groups.
-% schwacher satz
-Also new features which might result in a considerable performance degredation can be tried out on a subset of all users in order to verify that they are actually feasible in production.
-% noch ein satz üebr legal \cite{Bezemer2010}
+Improving on that, providers may even choose to provide multiple versions at the same time in order to compare these. A common criterion is testing changes in the user behavior towards business goals. An example for this is A/B testing \cite{Kohavi2007}. In these a subset of the provider's customers is confronted with a different version of the interface. This enables the provider to measure statistically which influence the difference between the versions has on the business based on the behavior of the different split groups. Another criterion is the technical impact of a change. This might be regarding the correct behavior of new changes as well as potential performance degradation. Both can be tested on a subset of the users in order to verify that they are actually feasible in the production environment.
 
-But SaaS-providers do not only provide multiple versions of the same software for their own benefit.
-It is a comon phenomenon that users of a software may remain relentless to adopt any never version.
-This might be either because a certain version does not seem to provide enough value to justify switching.
-Or even because adapting to the new version might require additional changes, for instance if the customer has to fix an extension which interfaces with the software's API over a deprecated interface.
-In these cases the SaaS provider will have to keep the old version available for the customers reluctant to switch to the newer one in order to keep his customer .
+But SaaS providers do not only provide multiple versions of the same software for their own benefit. It is a common phenomenon that users of a software may be hesitant or even reluctant to adopt a new version. Among the reasons are that a certain version does not provide enough value to the customer to justify switching. Another reason are technical incompatibilities between interfaces for example if a customer uses an extension which depends on deprecated Application Programmable Interface (API) functionality.
+In these cases the SaaS provider will have to keep the old version available for the customers reluctant to switch to the newer one.
+
+All these reasons lead us to our research question: How might a SaaS provider serve different versions of their software to multiple tenants at the same time?
+
+In the following, we discuss terminology (Section~\ref{sec:terminology}) and related work (Section~\ref{sec:relatedwork}), explain our different approaches regarding the architecture (Section~\ref{sec:architecture}) and evaluate them against our previous experience (Section~\ref{sec:eval}). We finish with an outlook on future work (Section~\ref{sec:futurework}) and the conclusion (Section~\ref{sec:conclusion}).
+
 % todo
-%This complicates the provider's decision, 
+%This complicates the provider's decision,
 %  + provider pov
 %  needs flexibility to react to changed requirements
 %  reduce technical debt by retiring code/functionality
 %For instance they might need a certain feature which was deprecated by the development team as it incurred too much technical debt.
+
+% noch ein satz üebr legal \cite{Bezemer2010}
