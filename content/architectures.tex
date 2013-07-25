@@ -1,27 +1,30 @@
+%!TEX root = ../report.tex
+
 \section{Architecture (Johan)}
 \label{sec:architecture}
 
-In this section we first clarify the \emph{application stack} we are assuming the SaaS application to have. Then we explain the different architectural approaches to implement versioning of SaaS, with \emph{multi-instance} as well as \emph{shared-instance} on the different application stack layers.
+In this section we first clarify our assumptions about the \emph{application stack} of a SaaS. Then we explain the different architectures to implement  SaaS versioning.
 
-One important assumption we make for versioning is, that each tenant and therefore also all users of a tenant use the same version at the same time. Practially this means that each tenant has a dedicated migration point in which they decide to switch their version. This switch affects all their users at the same time. Users aren't allowed to individually choose their version.
+One important assumption we make for versioning is, that each tenant and therefore also all users of a tenant use the same version at the same time. In practice this means that each tenant has a dedicated migration point in time at which they decide to switch the version. This switch affects all their users at the same time. Users aren't allowed to individually choose their version.
 
-We furthermore assume that alls requests to the SaaS are authenticated, thus there is a user associated with each request. Since we have a tenant-based system, this will likely be the standard.
+We furthermore assume that all requests to the SaaS are authenticated, thus there is always a user as well as a tenant and its version associated with each request.
 
 \subsection{Application stack}
 \label{sec:stack}
 
-\begin{wrapfigure}{r}{0.4\textwidth}
-\centering
-\includegraphics[width=0.4\textwidth]{stack.pdf}
-\caption{Simplified Application Stack}
-\label{fig:stack}
+\begin{wrapfigure}{r}{0.35\textwidth}
+  \begin{center}
+    \includegraphics[width=0.3\textwidth]{stack.pdf}
+    \caption{Simplified \protect\\ Application Stack}
+    \label{fig:stack}
+  \end{center}
 \end{wrapfigure}
 
-To understand the architecture better, we first want to look at the SaaS application stack as displayed in Figure~\ref{fig:stack}. We derived this stack from our experience with developing SaaS ourselves as well as stacks we have seen in related papers (as depicted earlier in Section~\ref{sec:relatedwork}).
+To understand the architecture better, we first want to look at the SaaS application stack as displayed in Figure~\ref{fig:stack}. We derived this stack from our experience with developing SaaS ourselves as well as stacks we have seen in related papers as depicted earlier in Section~\ref{sec:relatedwork}.
 
-We assume a separation between the front-end, back-end and database layer. The \emph{front-end layer} is mainly concerned with the user interface. In a SaaS it will usually be delivered to the user's browser within a request/response cycle. Another case for the fron-end layer are native application that communicatie with the SaaS over a webservice API. We handle this more in-depth in Section~\ref{sec:sharedfrontend}. The \emph{back-end layer} is concerned with the application and business logic. It takes requests from the front-end layer and accordingly communicated with the \emph{database layer}. The front-end and back-end layers are stateless (mostly for being able to scale horizaontally). All state is kept in the database layer.
+We assume a separation between the front end, back end and database layer. The \emph{front end layer} is mainly concerned with the user interface. In a SaaS it will usually be delivered to the user's browser within a HTTP request/response cycle. Another possible implementation for the front end layer is a webservice API that enables external applications (e.g. third-party or native applications) to communicate with the SaaS. We handle this more in-depth in Section~\ref{sec:sharedfrontend}. The \emph{back end layer} is concerned with the application and business logic. It handles requests of the front end layer and consequently communicates with the \emph{database layer}. To allow for horizontal scaling, the front end and back end layers are usually implemented stateless. All state is then kept in the database layer.
 
-To focus our research, we omitted some details of the stack. First we were not concerned with neither caching nor load balancing. Furthermore we omitted how user management is done, especially with regards to authentication.
+To focus our research, we omitted some details of the stack. We were not concerned with neither caching nor load balancing. Furthermore we omitted how user management is done, especially with regards to authentication.
 
 \subsection{Multi-instance}
 
