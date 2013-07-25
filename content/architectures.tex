@@ -60,18 +60,18 @@ Versioning-wise the actual application stack is not version-aware and thus can b
 
 \subsection{Shared-instance}
 
-The shared-instance architecture consist of one software stack deployment that serves all tenants at the same time. This architecture is the one that is generally referred to when talking about SaaS applications, since it uses the economy of scale well due to its high consolidation factor \cite{Mietzner2009} \cite{Bezemer2010} \cite{Chong2006}.
+The shared-instance architecture consist of one software stack deployment that serves all tenants at the same time. This architecture is the one that is generally referred to when talking about multi-tenant SaaS applications, since it uses the economy of scale well due to its high consolidation factor \cite{Mietzner2009} \cite{Bezemer2010} \cite{Chong2006}.
 
-To investigate versioning in the shared-instance architecture, we will individually inspect the layers of the application stack as outlined in the previous section, consisting of the front-end, back-end and database layer. For each layer we will outline how versioning can happen. We are closing this section with a look at migrating between versions.
+To investigate versioning in the shared-instance architecture, we will individually inspect the layers of the application stack as outlined in the previous section, consisting of the front end, back end and database layer. For each layer we will outline how versioning can happen. We are closing this section with a look at how to migrate between versions.
 
 \subsection{Shared-instance: Front-end layer}
 \label{sec:sharedfrontend}
 
-We split the \emph{front-end layer} into two categories: a \emph{web-application} running in the user's browser and an \emph{API consumer} e.g. running on the user's mobile phone.
+We split the \emph{front end layer} into two categories: a \emph{web application} running in the user's browser and an \emph{API consumer} e.g. running on the user's mobile phone.
 
-\subsubsection{Web application} In web applications the user's browser is usually reloading the whole web page on each request, which usually stems from an interaction of the user with the system\footnote{We assume that caching works transparently and perfectly as well as "One page applications" reloading their assets automatically ("hot code reload") in case something on the back-end layer changes.}. Thus there is a thight couling between the front-end and the back-end, from which we conclude that they are both versioned simultaneously. Since the front-end software is delivered to the user's browser on each request, the versioning concern can be completely handled on the \emph{back-end layer} as outlined in the next section.
+\subsubsection{Web application} In web applications the user's browser is usually reloading the whole web page on each request, which mostly is triggered by an interaction of the user with the system\footnote{We assume that caching works transparently and perfectly as well as "One page applications" reloading their assets automatically ("hot code reload") in case something on the back end layer changes, as explained in \url{http://www.meteor.com/blog/2012/02/09/hot-code-pushes}}. Thus there is a tight coupling between the front end and the back end layer, from which we conclude that they are both versioned simultaneously. Since the front end software is delivered to the user's browser on each request, the versioning concern can be completely handled on the \emph{back end layer} as outlined in the next section.
 
-\subsubsection{API consumer} To allow programmatic access to the SaaS functionality, SaaS providers usually implement a webservice. A common occurance are HTTP APIs following the REST principles \cite{Fielding2000}. These APIs allow native applications (e.g. mobile phone applications) or other webservices to build on top of the SaaS. The SaaS and their API consumers are loosly coupled. They follow own product cycles. In case of compatibility breaking changes in the SaaS API, the API consumers have to adapt to the changes and deploy a new version to their users. This might be hard to do e.g. because users might be reluctant to updates, delivery cycles might be too long or the API consumer developer might not have the resources to update their product. This leads us to the conclusion that SaaS APIs should be able to provide several versions of the API at the same time. The API consumer chooses which version of the API they want to use. There are many ways to handle versioning APIs and explaining them in-depth is over the scope of this report. Examples are version numbers in the URL or \emph{HTTP Accept Header} of a request \cite{RFC2616}, or feature flags for the consumer application in the SaaS \cite{playbook2013}.
+\subsubsection{API consumer} To allow programmatic access to the SaaS functionality, SaaS providers usually implement a webservice. A common occurrence are HTTP APIs following the REST principles \cite{Fielding2000}. These APIs allow native applications (e.g. mobile phone applications) or other webservices to build on top of the SaaS. The SaaS and their API consumers are loosely coupled. They follow their own product cycles. In case of compatibility breaking changes in the SaaS API, the API consumers have to adapt to the changes and deploy a new version to their users. This might be hard to do e.g. because users might be reluctant to updates, delivery cycles might be too long or the API consumer developer might not have the resources to update their product. This leads us to the conclusion that SaaS APIs should be able to provide several versions at the same time. The API consumers choose which version of the API they want to use. There are many ways to handle versioning APIs and explaining them in-depth is out of the scope of this report. Examples are version numbers in the URL or \emph{HTTP Accept Header} of a request \cite{RFC2616}, or feature flags for the consumer application in the SaaS \cite{playbook2013} (as explained further in Section~\ref{sec:shared1n}).
 
   % Frontend API Versioning
   %   In URL:
@@ -81,19 +81,20 @@ We split the \emph{front-end layer} into two categories: a \emph{web-application
   %   Application Flag:
 
 \subsection{Shared-instance: Back-end layer}
+\label{sec:backend}
 
-In versioning the back-end layer we are exploring two variants: \emph{1:1} and \emph{1:n}.
+For versioning the back end layer we explore two variants: \emph{1:1} and \emph{1:n}.
 
 \subsubsection{Shared-instance with 1:1 mapping}
 
-\begin{figure}
+\begin{figure}[h!]
 \centering
 \includegraphics[width=\textwidth]{sharedinstance11.pdf}
-\caption{Example for a shared-instance architecture with 1:1 mapping}
+\caption{Example for a shared-instance architecture with mapping each back end server to a code revision which in turn 1:1 maps to a product version}
 \label{fig:sharedinstance11}
 \end{figure}
 
-The \emph{1:1 mapping} depicts that each product version is mapped to one code revision. Figure~\ref{fig:sharedinstance11} shows the architecture. Thus to support different product versions at the same time, the respective code revisions have to be deployed on different back-end servers. On each request, the user management decides to which back-end servers the request is routed, depending on the tenant the user belongs to.
+The \emph{1:1 mapping} depicts that each product version is mapped to one code revision. Figure~\ref{fig:sharedinstance11} shows the architecture. Thus to support different product versions at the same time, the respective code revisions have to be deployed on different back end servers. On each request, the user management decides to which back end servers the request is routed, depending on the tenant the user belongs to.
 
 The benefit of this approach is, that the versioning is happening outside of the application code, thus the code does not have to be version-aware. On the downsides, the consolidation factor of this approach is low, given that the load is split between non-consolidateable versions. This defecit increases with the increase of versions running in parallel. Furthermore this leads to a heterogeneous deployment which is more complex than a homogeneous deployment.  Also this can lead to problems like bugfixes, that if written once have to be merged and deployed into every running version. Also this approach needs an intelligent routing layer (in our example above the user management) which decides on which app server to map which request.
 
@@ -109,6 +110,7 @@ The benefit of this approach is, that the versioning is happening outside of the
 % forking of code base makes security patches difficult to apply
 
 \subsubsection{Shared-instance with 1:n mapping}
+\label{sec:shared1n}
 
 \begin{figure}
 \centering
@@ -117,22 +119,23 @@ The benefit of this approach is, that the versioning is happening outside of the
 \label{fig:sharedinstance1n}
 \end{figure}
 
-The \emph{1:n mapping} depicts that each app server can serve requests for all of the \emph{n} available versions. Figure~\ref{fig:sharedinstance1n} shows the architecture. The choice of which version to serve is on the app server, implemented with feature switches. Listing~\ref{1ncode} shows a code example in Ruby. In the beginning of this section we assumed that every request has a user attached to it. Furthermore we assumed that all users of a tenant share the same version, which leads us to the assumption that the current version for each user will be saved in the backend and be available during runtime.
+The \emph{1:n mapping} depicts that each code revision maps to all available \emph{n} product versions. As shown in Figure~\ref{fig:sharedinstance1n} each application server has the same code revision deployed and is therefore able to decide which product version to serve for each request. One way to implemented this is with feature flags. Listing~\ref{1ncode} shows a code example in Ruby. In the beginning of this section we assumed that every request has a user attached to it. Furthermore we assumed that all users of a tenant share the same version. This leads us to the conclusion, that the backend can determine the version for each incoming request.
 
-\lstset{language=Ruby, caption=Example code for \emph{1:n mapping} on an applicaiton server, label=1ncode}
-\begin{lstlisting}
-  if user.has_version?("1.0")
-    do_something()
-  end
+\noindent\begin{minipage}{\textwidth}
+  \lstset{language=Ruby, caption=Example code for \emph{1:n mapping} on an application server, label=1ncode}
+  \begin{lstlisting}
+    if user.has_version?("1.0")
+      do_something()
+    end
 
-  if user.has_version?("1.1")
-    do_something_a_bit_different()
-  end
-\end{lstlisting}
+    if user.has_version?("1.1")
+      do_something_a_bit_different()
+    end
+  \end{lstlisting}
+\end{minipage}
 
-The \emph{1:n mapping} approach has several benefits: The consolidation factor is high, since all app servers can serve all requests. The deployment is homogeneous over the app servers, thus making operations easier. Also it is possible to version more fine-grained, not only based on product versions but actually on feature level and even feature version.
-
-On the downside, the feature switches in the code increase code complexity, which might increase development time and increases the probability of bugs. Also the feature switches are spread over the code and removing them needs software development effort. Thus abandoning old versions is connected with extra cost.
+The \emph{1:n mapping} approach has several benefits: The consolidation factor is high, since all app servers can serve all requests. The deployment is homogeneous over the app servers, thus making operations easier. Also it is possible to version more fine-grained, not only based on product versions but actually on feature level and even feature version. This opens up a tenant-feature matrix which allows versioning which is more flexible than the traditional linear versioning.
+On the downside, the feature flags in the code increase code complexity, which might increase development time and increases the probability of bugs. Also the feature flags are spread over the code and removing them needs software development effort. Thus abandoning old versions is connected with extra cost.
 
 % Pro
 % good consolidation
@@ -168,7 +171,7 @@ In our research we did not find a database that prodvides version-aware schemas.
 
 % TODO materialized views? i remember some research about making them writeable as well ...
 
-Since the database can not handle the versioning concern, the responsibility is pushed up in the stack to the back-end layer again. Next we will investigate two approaches for that.
+Since the database can not handle the versioning concern, the responsibility is pushed up in the stack to the back end layer again. Next we will investigate two approaches for that.
 
 \paragraph{Different tables for each schema}
 
