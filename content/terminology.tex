@@ -13,14 +13,10 @@ Multi-Tenancy itself should not be confused with multi-tenancy architecture whic
   %Multi-tenant =  Multi-User + SLA + Heavily customizable [DELFT]
 \subsection{Version}
 
-When considering versioning one has to differentiate between two definitions of a Software Version.
-For one thing a Software Version is a certain stage in the release lifecycle of a software.
-% 'old' ver: Though the process of actually selling a release version is nowad
-Further on a Software Version is a Software Revision and managed by a Version Control system as part of Software Configuration Management \cite{swebook}.
-% coupling: It might be belong to an actual product version
-As the latter definition in contrast to the former is mainly dealing with changes to the source code it might not even be detectable by the user at all.
-Therefor we will not regard it in the following.
+Considering software versioning two different definitions exists. One is the \emph{product version}, which identifies a certain stage of the software in a release lifecycle. The other is a \emph{code revision}, which is managed by a version control system as part of software configuration management \cite{swebook}.
 
+% coupling: It might be belong to an actual product version
+As the latter definition in contrast to the former is mainly dealing with changes to the source code, differences in code revisions might not be distinguishable by the users, whereas product versions are inherently visible to the users. In this report we are concerned with product versions and do not further discuss code revisions.
 
 %(Frontend:UI/Backend:Busisness Logix/DB)
   %- // how can we provide a versioning for all these layers with minimal cost. where the tenant can choose.
