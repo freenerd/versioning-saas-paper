@@ -1,13 +1,11 @@
-\section{Related Work (Max)}
+\section{Related Work}
 \label{sec:relatedwork}
 
-To introduce the reader to the topic of Software as a Service the lecture of~\cite{Chong2006a} is strongly advised as it discusses the underlying business model and proposes attributes to classify SaaS.
+As introduction to the topic of Software as a Service, reading the paper~\cite{Chong2006a} is advised as it discusses the underlying business model and proposes attributes to classify SaaS.
 
-An argument for the need to run multiple versions of a SaaS due to legislative reasons is made in \cite{Bezemer2010}.
-Further on the authors of \cite{Bezemer2010} discuss that for a multi-tenant architecture the software itself has to be written version-aware.
-This in turn increases the code complexity, compared to the possibility of creating a new instance of the application for each version in a multi-instance architecture.
+An argument for the need to run multiple versions of a SaaS due to legislative reasons is made in~\cite{Bezemer2010}. The authors also discuss that for a multi-tenant architecture the software itself has to be written version-aware in order to support customizing. This in turn increases the code complexity, compared to the possibility of creating a new instance of the application for each version in a multi-instance architecture.
 
-Though theoretically explored already in \cite{roddick1995survey} our research did not yield any database management system supporting schema versioning to that degree, that client applications could actually operate on different versions of a schema simultanously.
-Whereas schema evolution has been already repeatedly implemented in the application layer \cite{Weissman2009} \cite{Keddo}.
-There is only one publication by \cite{Aulbach2011} which describes a schema versioning scheme accompanied by the evaluation of a prototypical implementation for a main-memory DBMS. Their approach is motivated by the idea that schema handling should be responsibility of the database layer instead of the application layer.
+The topic of schema versioning has been discussed by~\cite{roddick1995survey}. Schema evolution has also been implemented in the application layer in~\cite{Weissman2009}~\cite{Keddo}.
+
+A schema versioning scheme has been implemented prototypically in a main-memory database management system by~\cite{Aulbach2011}. Their approach is motivated by the idea that schema handling should be the responsibility of the database layer instead of the application layer.
 
