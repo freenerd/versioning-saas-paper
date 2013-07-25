@@ -3,36 +3,23 @@
 The recent trend of providing Software as a Service instead of via the classical retail channels has changed the way that this software is versioned.
 Earlier software was released infrequently and the customer would choose when to switch to a different version after it was released.
 Nowadays a Software as a Service provider is able to release updates to the provided software continuosly and deploy them without further action of the customer aswell.
-\\
-Improving upon that providers may even choose to provide multiple versions at the same time in order to compare these.
-For instance changes to the user-interface are tried out in A/B split tests especially by web companies.
-In this way they are able to decide whether a certain change is an actual improvement based on the behaviour of the different split groups.
+
+Improving upon that, providers may even choose to provide multiple versions at the same time in order to compare these.
+For instance changes to the user-interface are, especially by web companies, tried out in A/B-split tests.
+In these a subset of the providers customers is confronted with a different version of the interface which has only one specific difference.
+This enables the provider to measure statistically which influence this difference has on his business based on the behaviour of the different split groups.
+% schwacher satz
 Also new features which might result in a considerable performance degredation can be tried out on a subset of all users in order to verify that they are actually feasible in production.
+% noch ein satz üebr legal \cite{Bezemer2010}
 
--- aber mehr versionen != geiler
---   schwerer festzustellen
-
-
-
-In that way the customer could decide to delay upgrading, when switching the version might impair their usage of the software.
-
-What is SaaS and multi-tenancy and why is it important? (better explained in \ref{sec:terminology}?)
-
-What is versioning?
-
-Reasons for versioning
-  Manage incompatibility
-    Feature change (User acceptance)
-    API compatibility (Technical incompatibility)
-
-  Rollout of features
-    Ops: Does it scale?
-    Biz/Users: Is it accepted by users? Does the feature 'work' (A/B testing)
-  - Legal
-
-  + provider pov
-  needs flexibility to react to changed requirements
-  reduce technical debt by retiring code/functionality
-
-  + user pov
-  client will complain and will want to stay on the old version
+But SaaS-providers do not only provide multiple versions of the same software for their own benefit.
+It is a comon phenomenon that users of a software may remain relentless to adopt any never version.
+This might be either because a certain version does not seem to provide enough value to justify switching.
+Or even because adapting to the new version might require additional changes, for instance if the customer has to fix an extension which interfaces with the software's API over a deprecated interface.
+In these cases the SaaS provider will have to keep the old version available for the customers reluctant to switch to the newer one in order to keep his customer .
+% todo
+%This complicates the provider's decision, 
+%  + provider pov
+%  needs flexibility to react to changed requirements
+%  reduce technical debt by retiring code/functionality
+%For instance they might need a certain feature which was deprecated by the development team as it incurred too much technical debt.

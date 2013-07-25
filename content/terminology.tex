@@ -3,7 +3,9 @@
 
 \subsection{Multi-Tenancy}
 
-Commercial Software as a Service Products are usually build for multi-user usage and provided to a large number of clients. As these clients' users need to be isolated from other client's users, each tenant has to be provided with a multi-user system in itself \cite{Chong2006a}. To sell the products to a wide variety of customers they are usually heavily customizable and additionally different Service Level Agreements might be in place between the provider and his customers \cite{Bezemer2010}.
+Commercial Software as a Service products are usually build for multi-user usage and provided to a large number of clients over the internet. As these clients' users need to be isolated from other clients' users, each tenant has to be provided with a multi-user system in itself \cite{Chong2006a}. To sell the products to a wide variety of customers they are usually heavily customizable and additionally different Service Level Agreements might be in place between the provider and his customers \cite{Bezemer2010}.
+
+Multi-Tenancy itself should not be confused with multi-tenancy architecture which is a counterpart to Multi-Instance architecture and specifies that the implementation is able to serve multiple tenants from a single instance of the software~\cite{Shao2011}.
 
 %What is multi tenancy? How does it relate to multi user?
   %multi-user is a subset of multi-tenant
@@ -13,28 +15,11 @@ Commercial Software as a Service Products are usually build for multi-user usage
 
 When considering verisoning one has to differentiate between two definitions of a Software Version.
 For one thing a Software Version is a certain stage in the release lifecicle of a software.
+% 'old' ver: Though the process of actually selling a release version is nowad
 Further on a Software Version is a Software Revision and managed by a Version Control system as part of Software Configuration Management \cite{swebook}.
-As the latter definition in contrast to the former is mainly concerned with changes to the source code
-
-ycle like beta / release
-
-
-Code-Revision / Product-Version
-  - explain PV stop talking about CR afterwards
-  - // api versioning is just small fraction of the application
-  Product version Visible to the user
-  Code revision   Invisible to the user
-
-  Coupling of product version and code revision depends on architecture of application.
-  example for "old" product version: use a specific software not just version 1 2 3 4 5
-  MS office versions
-
-  why only product version?
-  if changes don't affect the user then we don't need to version
-  When we mention 'version', we are talking about product versions.
-
-In the following we will consider only Product Versions as Code Revisions are only visible to the developers
-
+% coupling: It might be belong to an actual product version 
+As the latter definition in contrast to the former is mainly dealing with changes to the source code it might not even be detectable by the user at all.
+Therefor we will not regard it in the following.
 
 
 %(Frontend:UI/Backend:Busisness Logix/DB)
