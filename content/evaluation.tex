@@ -5,11 +5,32 @@
 
 We evaluate our findings of the previous sections with our experience in developing SaaS systems ourselves.
 
-\paragraph{Project A} was a multi-user SaaS with over 10 million registered users. It served a website as well as a REST API from a Ruby on Rails web application backed by MySQL servers. At one point it was decided to build a new version of the website, mostly to implement fundamental changes in the user interface. Also old features were removed or fundamentally changed as well as new features added. A team was elected to work on the new website, while another team continued to maintain the old website. Furthermore it was decided to build the new version as an API client on top of the current REST API. A new code base with own deployment independent of the current website was created. During development it showed that the REST API did not support all features needed by the new version, thus the REST API was extended to support new endpoints. Also some schema changes were necessary, but they were either additions to existing tables or new tables. The Ruby on Rails application used Active Record as an ORM to access the database. Active Record handles additions to the schema in a forward-compatible way. Thus the schema changes needed for the new website were 100\% backwards compatible with the old website.
+\paragraph{Project A} was a multi-user SaaS with over 10 million registered users. It served a website as well as a REST API from a Ruby on Rails web application backed by MySQL servers. At one point it was decided to build a new version of the website, mostly to implement fundamental changes in the user interface. Also old features were removed or fundamentally changed as well as new features added. A team was elected to work on the new website, while another team continued to maintain the old website. Furthermore it was decided to build the new version as an API client on top of the current REST API. A new code base with own deployment independent of the current website was created. During development it showed that the REST API did not support all features needed by the new version, thus the REST API was extended to support new endpoints. Also some schema changes were necessary, but they were either additions to existing tables or new tables. The Ruby on Rails application used Active Record as an object-relational mapping (ORM) to access the database. Active Record handles additions to the schema in a forward-compatible way. Thus the schema changes needed for the new website were 100\% backwards compatible with the old website.
 
 Once deployed, the new version was gradually rolled out the the users. Users were able to opt-in to the new version, but also to switch back to the old version. Anonymous users were initially always served the old version, but once the new version was officially launched all anonymous users got served the new version. The respective version per user was saved in a cookie. When a user requested the website, the web server receiving the request decided based on the cookie information, to which application server the request should be routed.
 
 The versioning in this example happened outside of our architecture proposals in the previous Section~\ref{sec:architecture}, since the new version became an API client of the old version. It still relates to the shared-instance 1:1 approach from Section~\ref{sec:backend11}, since it has application servers per version and a routing layer routing requests based on versions. Also one of the insights it validates is that schema changes are possible between versions if they happen in a compatible way.
 
-\paragraph{Project B} Max
+\paragraph{Project B} was a multi-tenant email marketing software written in PHP using MySQL servers as DBMS.
+During the first years after the launch a lot of feature requests from their early customers were directly implemented.
+But when the SaaS reached 30,000 users, it had become to complex to appeal to new customers.
+It was decided to rewrite the SaaS in Ruby in Rails in order to simplify the application feature-wise and to redesign the user experience.
+In order to isolate the two versions from each other both were deployed to different application stacks.
+
+As the ORM Active Record could not be adapted to the old schema, the new version relied on a new schema instead.
+Old customers were able to migrate all their data from the old to the new system.
+The other direction, migrating back to the old version, was nevertheless unsupported, because it was regarded to complex to be solved under economic constraints.
+The goal was to allow productive use from the first minute on, so that the customers would not have to wait in order to try out the new version.
+But for large customers this data transfer lasted for multiple hours.
+Therefore their data had to be copied asynchronously into the new schema, prioritizing important and regularly used data over the remaining majority of historic and statistical data.
+
+The new version was in the beginning accessed over a separate subdomain and it can be classified as a hybrid multi-instance architecture from Section~\ref{sec:multiinstance} with versioning implemented on the access layer.
+Each version was deployed to a different application stack but the data of the old version was replicated to the database servers of the new version in order to allow for fast on-the-fly migration.
+The resulting redundancy of data and the completely not consolidated application servers verify our findings about multi-instance architectures.
+
+
+
+
+
+
 
