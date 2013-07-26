@@ -29,6 +29,7 @@ We assume a separation between the front end, back end and database layer. The \
 To focus our research, we omitted some details of the stack. We were not concerned with neither caching nor load balancing. Furthermore we omitted how user management is done, especially with regards to authentication.
 
 \subsection{Multi-instance}
+\label{sec:multiinstance}
 
 \begin{figure}
 \vspace{-20pt}
@@ -86,6 +87,7 @@ We split the \emph{front end layer} into two categories: a \emph{web application
 For versioning the back end layer we explore two variants: \emph{1:1} and \emph{1:n}.
 
 \subsubsection{Shared-instance with 1:1 mapping}
+\label{sec:backend11}
 
 \begin{figure}[h!]
 \centering

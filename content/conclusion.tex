@@ -1,23 +1,41 @@
+%!TEX root = ../report.tex
+
 \section{Conclusion (Johan \& Max)}
 \label{sec:conclusion}
 
-Versioning is mainly a concern of one layer in architecture
+% TODO Diagram of the layers?
 
-Where to select the version?
-multi-instance: access layer
-1:1 = routing layer
-1:n = code level
+In this report we investigated options on how SaaS providers might serve different versions of their software at the same time. We described in Section~\ref{sec:architecture} how versioning can be implemented on different layers. We see three architectural points where the versioning concern can be handled:
 
-High Level Versioning:
-clean separation of versioning concern
-low consolidation
+\begin{itemize}
+  \item On the access layer with a multi-instance architecture as described in Section~\ref{sec:multiinstance}
+  \item On the back end routing layer in a shared-instance architecture as described in Section~\ref{sec:backend11}
+  \item On the back end application layer within the application code in a shared-instance architecture as described in Section~\ref{sec:shared1n}
+\end{itemize}
 
-Low Level Versioning:
-versioning inside of application
-high consolidation
+Implementing versioning on the access layer with a multi-instance architecture provides worst consolidation, but also makes versioning an operational problem that can be easily handled if there is a small number of versions and users. Implementing versioning within the application code provides the highest consolidation factor, but also requires most engineering effort.
 
-Versioning is mainly an engineering problem
-key aspect: migrating schema \& data
-Version-aware databases should support this
+In our research we noticed that the general idea of versioning is a linear line of increasing version number, with several changes bundled into one new version. This concept comes from the traditional way of physically shipping software to the users. With SaaS, shipping software became instantaneous, thus technically obsoleting the need to bundle features into one big release. Instead, it is now possible to ship features individually. The concept of feature flags (as explained in Section~\ref{sec:shared1n}) then enables a fine-grained control over which tenants and users get which features, thus enabling versioning in a two-dimensional user-feature space instead of the traditional linear versioning. This approach enables faster iteration times and higher adoption to the user's needs.
 
-General question: Do you want to version in the traditional way of packing a lot of features into one release? This was born out of necessity to actually ship a physical product. With SaaS shipping software became instentaneuous, thus no need to bundle features into one big release other than for communication and marketing. It is much easier to ship based on features. We believe these advantages should be used, which leads to a more fine-grained versioning with a faster iteration time.
+% talk about data migration?
+
+To conclude, we think that versioning is an engineering problem that has already been solved for many cases. Still especially with regards to versioning schemas in the database, further research is needed.
+
+% Where to select the version?
+% multi-instance: access layer
+% 1:1 = routing layer
+% 1:n = code level
+%
+% High Level Versioning:
+% clean separation of versioning concern
+% low consolidation
+%
+% Low Level Versioning:
+% versioning inside of application
+% high consolidation
+%
+% Versioning is mainly an engineering problem
+% key aspect: migrating schema \& data
+% Version-aware databases should support this
+
+% General question: Do you want to version in the traditional way of packing a lot of features into one release? This was born out of necessity to actually ship a physical product. With SaaS shipping software became instentaneuous, thus no need to bundle features into one big release other than for communication and marketing. It is much easier to ship based on features. We believe these advantages should be used, which leads to a more fine-grained versioning with a faster iteration time.
