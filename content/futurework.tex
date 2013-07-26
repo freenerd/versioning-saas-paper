@@ -7,10 +7,8 @@ In our research we made two assumptions that simplified our setup but could yiel
 
 \paragraph{Caching} To build a SaaS that is able to serve many users, caching is an essential technique. In our research we omitted caching. It would be interesting to investigate caching more with regards to versioning, especially if cached objects have to be invalidated during version changes or not.
 
-One of our insights from Section~\ref{sec:database} was that versioning with schema changes can currently not be implemented as a concern on the data storage layer, but has to be handled by the application layer. Depending on the implementation this might also mean that the schema is not kept by the DBMS anymore, but rather by the application layer. This might lead to the DBMS not benefiting from features like indices anymore, which impedes the performance of the DBMS.
-
-% TODO KEMPER?
-
 \vspace{4 mm}
+
+One of our insights from Section~\ref{sec:database} was that versioning with schema changes can currently not be implemented as a concern on the data storage layer, but has to be handled by the application layer. Depending on the implementation this might also mean that the schema is not kept by the DBMS anymore, but rather by the application layer. This might lead to the DBMS not benefiting from mechanisms like indices or caching anymore, which impedes the performance of the DBMS.
 
 We believe that further research in the direction of version-aware database management systems could be interesting future work. An example would be that the application could specify via a SQL extension which version of a table they want to access. The DBMS would then take care of loading the correct schema as well as arrange the base data itself, thus relieving the application layer of that concern.
