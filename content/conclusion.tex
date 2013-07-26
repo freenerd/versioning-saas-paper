@@ -1,9 +1,7 @@
 %!TEX root = ../report.tex
 
-\section{Conclusion (Johan \& Max)}
+\section{Conclusion}
 \label{sec:conclusion}
-
-% TODO Diagram of the layers?
 
 In this report we investigated options on how SaaS providers might serve different versions of their software at the same time. We described in Section~\ref{sec:architecture} how versioning can be implemented on different layers. We see three architectural points where the versioning concern can be handled:
 
@@ -13,11 +11,11 @@ In this report we investigated options on how SaaS providers might serve differe
   \item On the back end application layer within the application code in a shared-instance architecture as described in Section~\ref{sec:shared1n}
 \end{itemize}
 
-Implementing versioning on the access layer with a multi-instance architecture provides worst consolidation, but also makes versioning an operational problem that can be easily handled if there is a small number of versions and users. Implementing versioning within the application code provides the highest consolidation factor, but also requires most engineering effort.
+Implementing versioning on the access layer with a multi-instance architecture provides low consolidation factor, but also makes versioning an operational problem that can be easily handled if there is a small number of versions and users. Implementing versioning within the application code provides the highest consolidation factor, but also requires most engineering effort.
 
-In our research we noticed that the general idea of versioning is a linear line of increasing version number, with several changes bundled into one new version. This concept comes from the traditional way of physically shipping software to the users. With SaaS, shipping software became instantaneous, thus technically obsoleting the need to bundle features into one big release. Instead, it is now possible to ship features individually. The concept of feature flags (as explained in Section~\ref{sec:shared1n}) then enables a fine-grained control over which tenants and users get which features, thus enabling versioning in a two-dimensional user-feature space instead of the traditional linear versioning. This approach enables faster iteration times and higher adoption to the user's needs.
+In our research we noticed that versioning is generally thought of as linearly increasing version numbers, with several feature changes bundled into each version. This concept comes from the traditional way of physically shipping software to the users. With SaaS instantaneously shipping software became possible. This technically obsoleted the need to bundle features into one big release. Instead it is now possible to ship features individually. The concept of feature flags (as explained in Section~\ref{sec:shared1n}) then enables a fine-grained control over which tenants and users get which features, thus enabling versioning in a two-dimensional user-feature space instead of the traditional linear versioning. This approach enables faster iteration times and higher adaption to the users' needs.
 
-% talk about data migration?
+All approaches to versioning that involve incompatible schema or data changes have to consider how to migrate data between versions. These migrations need a considerable engineering effort to reduce service disruption and service performance degradation.
 
 To conclude, we think that versioning is an engineering problem that has already been solved for many cases. Still especially with regards to versioning schemas in the database, further research is needed.
 
