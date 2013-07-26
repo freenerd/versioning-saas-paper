@@ -3,7 +3,7 @@
 
 \subsection{Multi-Tenancy}
 
-Software as a Service products are usually built for multi-user usage. In Multi-tenancy, these users belong to one tenant and need to be isolated from other tenants' users. Each tenant has hereby access to an isolated multi-user system \cite{Chong2006a}. To sell the products to a wide variety of tenants the software is usually heavily customizable and secured by Service Level Agreements~\cite{Bezemer2010}.
+Software as a Service products are usually built as multi-user systems. In multi-tenancy, these users belong to one tenant and need to be isolated from other tenants' users. Each tenant has hereby access to an isolated multi-user system \cite{Chong2006a}. To sell the products to a wide variety of tenants the software is usually heavily customizable and secured by Service Level Agreements~\cite{Bezemer2010}.
 
 Multi-Tenancy itself should not be confused with multi-tenancy architecture which differs from multi-instance architecture by servicing multiple tenants from a single instance of the software~\cite{Shao2011} in contrast to providing a dedicated instance of the software to each tenant.
 
@@ -16,7 +16,7 @@ Multi-Tenancy itself should not be confused with multi-tenancy architecture whic
 Considering software versioning two different definitions exists. One is the \emph{product version}, which identifies a certain stage of the software in a release lifecycle. The other is a \emph{code revision}, which is managed by a version control system as part of software configuration management \cite{swebook}.
 
 % coupling: It might be belong to an actual product version
-As the latter definition in contrast to the former is mainly dealing with changes to the source code, differences in code revisions might not be distinguishable by the users, whereas product versions are inherently visible to the users. The distinction between product version and code revision will be made again in Section~\ref{sec:backend}. When we talk about version without specifying the type, we refer to product versions.
+As the latter definition in contrast to the former is mainly dealing with changes to the source code, differences in code revisions might not be distinguishable by the users, whereas product versions are inherently visible to the users. The distinction between product version and code revision will be made again in Section~\ref{sec:backend}. When we talk about version without specifying the kind, we refer to product versions.
 
 %(Frontend:UI/Backend:Busisness Logix/DB)
   %- // how can we provide a versioning for all these layers with minimal cost. where the tenant can choose.

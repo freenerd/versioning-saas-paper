@@ -11,11 +11,11 @@ Once deployed, the new version was gradually rolled out the the users. Users wer
 
 The versioning in this example happened outside of our architecture proposals in the previous Section~\ref{sec:architecture}, since the new version became an API client of the old version. It still relates to the shared-instance 1:1 approach from Section~\ref{sec:backend11}, since it has application servers per version and a routing layer routing requests based on versions. Also one of the insights it validates is that schema changes are possible between versions if they happen in a compatible way.
 
-\paragraph{Project B} was a multi-tenant email marketing software written in PHP using MySQL servers as DBMS.
+\paragraph{Project B} was a multi-tenant SaaS written in PHP using MySQL servers as DBMS.
 During the first years after the launch a lot of feature requests from their early customers were directly implemented.
-But when the SaaS reached 30,000 users, it had become to complex to appeal to new customers.
-It was decided to rewrite the SaaS in Ruby in Rails in order to simplify the application feature-wise and to redesign the user experience.
-In order to isolate the two versions from each other both were deployed to different application stacks.
+But when the SaaS reached 30,000 users, it had become too complex to appeal to new customers.
+It was decided to rewrite the application in Ruby on Rails in order to simplify it feature-wise and to redesign the user experience.
+For the purpose of isolating the two versions from each other both were deployed to different application stacks.
 
 As the ORM Active Record could not be adapted to the old schema, the new version relied on a new schema instead.
 Old customers were able to migrate all their data from the old to the new system.

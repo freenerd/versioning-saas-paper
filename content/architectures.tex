@@ -3,7 +3,7 @@
 \section{Architecture}
 \label{sec:architecture}
 
-In this section we first clarify our assumptions about the \emph{application stack} of a SaaS. Then we explain the different architectures to implement  SaaS versioning.
+In this section we first clarify our assumptions about the \emph{application stack} of a SaaS, then we explain the different architectures to implement  SaaS versioning.
 
 One important assumption we make for versioning is, that each tenant and therefore also all users of a tenant use the same version at the same time. In practice this means that each tenant has a dedicated migration point in time at which they decide to switch the version. This switch affects all their users at the same time. Users aren't allowed to individually choose their version.
 
@@ -47,25 +47,25 @@ This approach can also be used for versioning, where we see two variants:
 \paragraph{Single instance per tenant} When every tenant has their own application stack instance running, these instances can be versioned by deploying the respective software version on the tenant's instance. See Figure~\ref{fig:multiinstance} for reference.
 \paragraph{Single instance per version with multiple tenants} This is a hybrid approach where each instance has a specific version and the instances in turn can be hosts for multiple tenants by using the shared-instance mechanisms explained in the following section. See Figure~\ref{fig:multiinstance_versionstack} for reference.
 
-\begin{figure}
-\vspace{-15pt}
+\begin{figure}[h]
 \centering
 \includegraphics[width=\textwidth]{multiinstance_versionstack.pdf}
 \caption{Example for a hybrid multi-instance approach which is multi-instance regarding the version, but shared-instance regarding the tenants}
 \label{fig:multiinstance_versionstack}
+\vspace{-10pt}
 \end{figure}
 
-Using a multi-instance architecture has the benefits that the developers do not have to deal with issues concerning multi-tenancy in the application code. One of the drawbacks is the bad resource consolidation factor, thus if e.g. one tenant uses many resources but another uses none, the unused resources can't be allocated to the spiking tenant easily. Also the maintenance cost increases with the number of versions and tenants and there is no economy of scale working in favor of the SaaS provider then.
+\vspace{\baselineskip}
+\noindent Using a multi-instance architecture has the benefits that the developers do not have to deal with issues concerning multi-tenancy in the application code. One of the drawbacks is the bad resource consolidation factor, thus if e.g. one tenant uses many resources but another uses none, the unused resources can't be allocated to the spiking tenant easily. The maintenance cost increases with the number of versions and tenants and also there is then no economy of scale working in favor of the SaaS provider.
 
-Versioning-wise the actual application stack is not version-aware and thus can be built without versioning as a concern. Instead versioning is handled on the deployment level. Migrations between versions might then need significant operations engineering effort.
-
+Versioning-wise the actual application stack is not version-aware and thus can be built without versioning as a concern. Instead versioning is handled on the deployment level. Migrations between versions might then need significant operations engineering effort. Especially in the hybrid approach when data has to be migrated across application stacks.
 \subsection{Shared-instance}
 
 The shared-instance architecture consist of one software stack deployment that serves all tenants at the same time. This architecture is the one that is generally referred to when talking about multi-tenant SaaS applications, since it uses the economy of scale well due to its high consolidation factor \cite{Mietzner2009} \cite{Bezemer2010} \cite{Chong2006}.
 
 To investigate versioning in the shared-instance architecture, we will individually inspect the layers of the application stack as outlined in the previous section, consisting of the front end, back end and database layer. For each layer we will outline how versioning can happen. We are closing this section with a look at how to migrate between versions.
 
-\subsection{Shared-instance: Front-end layer}
+\subsection{Shared-instance: Front end layer}
 \label{sec:sharedfrontend}
 
 We split the \emph{front end layer} into two categories: a \emph{web application} running in the user's browser and an \emph{API consumer} e.g. running on the user's mobile phone.
@@ -81,7 +81,7 @@ We split the \emph{front end layer} into two categories: a \emph{web application
   %     Accept: application/json+v1
   %   Application Flag:
 
-\subsection{Shared-instance: Back-end layer}
+\subsection{Shared-instance: Back end layer}
 \label{sec:backend}
 
 For versioning the back end layer we explore two variants: \emph{1:1} and \emph{1:n}.
@@ -94,6 +94,7 @@ For versioning the back end layer we explore two variants: \emph{1:1} and \emph{
 \includegraphics[width=\textwidth]{sharedinstance11.pdf}
 \caption{Example for a shared-instance architecture with mapping each back end server to a code revision which in turn 1:1 maps to a product version}
 \label{fig:sharedinstance11}
+\vspace{-20pt}
 \end{figure}
 
 The \emph{1:1 mapping} depicts that each product version is mapped to one code revision. Figure~\ref{fig:sharedinstance11} shows the architecture. Thus to support different product versions at the same time, the respective code revisions have to be deployed on different back end servers. On each request, the user management decides to which back end servers the request is routed, depending on the tenant the user belongs to.
@@ -114,14 +115,18 @@ The benefit of this approach is, that the versioning is happening outside of the
 \subsubsection{Shared-instance with 1:n mapping}
 \label{sec:shared1n}
 
-\begin{figure}
+\begin{figure}[h!]
 \centering
 \includegraphics[width=\textwidth]{sharedinstance1n.pdf}
 \caption{Example for a shared-instance architecture with mapping each back end server to a code revision which in turn can server several product versions}
 \label{fig:sharedinstance1n}
+\vspace{-20pt}
 \end{figure}
 
 The \emph{1:n mapping} depicts that each code revision maps to all available \emph{n} product versions. As shown in Figure~\ref{fig:sharedinstance1n} each application server has the same code revision deployed and is therefore able to decide which product version to serve for each request. One way to implemented this is with feature flags. Listing~\ref{1ncode} shows a code example in Ruby. In the beginning of this section we assumed that every request has a user attached to it. Furthermore we assumed that all users of a tenant share the same version. This leads us to the conclusion, that the backend can determine the version for each incoming request.
+
+The \emph{1:n mapping} approach has several benefits: The consolidation factor is high, since all app servers can serve all requests. The deployment is homogeneous over the app servers, thus making operations easier. Also it is possible to version more fine-grained, not only based on product versions but actually on feature level and even feature version. This opens up a tenant-feature matrix which allows versioning which is more flexible than the traditional linear versioning.
+On the downside, the feature flags in the code increase code complexity, which might increase development time and increases the probability of bugs. Also the feature flags are spread over the code and removing them needs software development effort. Thus abandoning old versions is connected with extra cost.
 
 \noindent\begin{minipage}{\textwidth}
   \lstset{language=Ruby, caption=Example code for \emph{1:n mapping} on an application server, label=1ncode}
@@ -134,10 +139,10 @@ The \emph{1:n mapping} depicts that each code revision maps to all available \em
       do_something_a_bit_different()
     end
   \end{lstlisting}
+  \vspace{-20pt}
 \end{minipage}
 
-The \emph{1:n mapping} approach has several benefits: The consolidation factor is high, since all app servers can serve all requests. The deployment is homogeneous over the app servers, thus making operations easier. Also it is possible to version more fine-grained, not only based on product versions but actually on feature level and even feature version. This opens up a tenant-feature matrix which allows versioning which is more flexible than the traditional linear versioning.
-On the downside, the feature flags in the code increase code complexity, which might increase development time and increases the probability of bugs. Also the feature flags are spread over the code and removing them needs software development effort. Thus abandoning old versions is connected with extra cost.
+
 
 % Pro
 % good consolidation
@@ -165,11 +170,9 @@ When different versions share the same database schema, the database is actually
 
 \subsubsection{Different versions require different incompatible schemas}
 
-When schemas change between versions in an incompatible way, the database layer has to be versioned. Given that we assume we are dealing with a schema-enforcing database management systems (DBMS), the question is: How can schemas be versioned? How can a database support several schemas for the same data at the same time?
+When schemas change between versions in an incompatible way, the database layer has to be versioned. Current database management systems (DBMS) only support one schema at a time per table. The concept of an updatable view is theoretically able to express this. However in our research we learned that implementations in current DBMS are not, e.g. when using aggregate functions.
 
-The problem is that current DBMS do always only support one schema at a time. In our research we did not find a DBMS that provides version-aware schemas. We investigate this option more in Section~\ref{sec:futurework}.
-
-Since the database layer can not handle the versioning concern, the responsibility lies with the back end layer. Next we will investigate two approaches for that.
+As we did not find a DBMS that provides version-aware schemas, though this topic has been already researched~\cite{Aulbach2011}, we investigate this option more in Section~\ref{sec:futurework}. Since the database layer can currently not handle the versioning concern, the responsibility lies with the back end layer. Next we will investigate two approaches for that.
 
 \paragraph{Different tables for each schema}
 
@@ -182,7 +185,7 @@ To store different schemas, a new database or table can be created for each vers
   CREATE TABLE users_v3(id int(11), user_name varchar(200));
 \end{lstlisting}
 
-The problem with approach is that migrations between versions require moving the data of a whole tenant from the tables of one version to the tables of another version. This might include columns or even whole tables that were not changed between versions. This copying introduces a significant overhead which  current DBMS are not optimized for.
+With this approach migrations between versions require moving the data of a whole tenant from the tables of one version to the tables of another version. This might include columns or even whole tables that were not changed between versions. This copying introduces a significant overhead which current DBMS are not optimized for.
 
 \paragraph{Pivot tables}
 
@@ -199,7 +202,7 @@ Pivot tables as explained in \cite{Yaish2011} \cite{Aulbach2011} \cite{Weissman2
 
 When a tenant decides to move to a new version and the new version requires a schema change, then the data of the tenant has to be migrated from the old to the new schema. Next we will describe two ways for running these migrations:
 
-\paragraph{Batch-processing migration} The data is migrated in one go. Depending on the database management system, the schema changes and the amount of data, this process might take significant time. Depending on the algorithm used to execute the migration, the database and therefore the whole application might be completely unavailable or in read-only state for the tenant's users during the migration. An example for a migration process that has low interference with the operations of the application is presented in~\cite{Keddo}.
+\paragraph{Batch-processing migration} The data is migrated in one go. Depending on the database management system, the schema changes and the amount of data this process might take significant time. Depending on the algorithm used to execute the migration the database and therefore the whole application might be completely unavailable or in read-only state for the tenant's users during the migration. An example for a migration process that has low interference with the operations of the application is presented in~\cite{Keddo}.
 
 \paragraph{On-the-fly migration} The data is migrated when it is requested or written to or from the database. This could mean that a semantic group of data is migrated in batch when a certain event is triggered e.g. all data belonging to a user is migrated on log in.
 
