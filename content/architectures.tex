@@ -160,12 +160,10 @@ The database is where state is kept. We assume that the database is a relational
 In this section we will differentiate between two major cases regarding the database when versioning SaaS: \emph{Different versions share a compatible database schema} and \emph{different versions require different incompatible schemas}.
 
 \subsubsection{Different versions share a compatible schema}
-% TODO nice diagram?
 
 When different versions share the same database schema, the database is actually agnostic to versioning. The changes of the versions happen in the other layers and thus never propagate down to the database. The same happens if changes are needed for one version, but the changes are compatible with the other versions. An example for this is the addition of new columns or tables. These can usually be ignored by versions that don't need these columns or tables, thus enabling compatibility with the changed schema.
 
 \subsubsection{Different versions require different incompatible schemas}
-% TODO nice diagram?
 
 When schemas change between versions in an incompatible way, the database layer has to be versioned. Given that we assume we are dealing with a schema-enforcing database management systems (DBMS), the question is: How can schemas be versioned? How can a database support several schemas for the same data at the same time?
 
@@ -185,13 +183,6 @@ To store different schemas, a new database or table can be created for each vers
 \end{lstlisting}
 
 The problem with approach is that migrations between versions require moving the data of a whole tenant from the tables of one version to the tables of another version. This might include columns or even whole tables that were not changed between versions. This copying introduces a significant overhead which  current DBMS are not optimized for.
-
-% TODO: Ich bin von den Pro/Cons nicht so richtig überzeugt
-% Pro:
-% Works well if not too many versions
-%
-% Con:
-% Messy design if many versions
 
 \paragraph{Pivot tables}
 
