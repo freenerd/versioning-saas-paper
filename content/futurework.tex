@@ -1,14 +1,12 @@
-\section{Future Work (Johan)}
+%!TEX root = ../report.tex
+
+\section{Future Work}
 \label{sec:futurework}
 
 In our research we made two assumptions that simplified our setup but could yield interesting future work:
 
-\paragraph{Switching versions per user} In Section~\ref{sec:stack} we assumed that a tenant chooses the version for all their users at the same time. Future research should investigate how versioning on the user-level could be implemented, especially when schema changes are involved.
+\paragraph{Switching versions per user} In Section~\ref{sec:stack} we assumed that a tenant chooses the version for all their users at the same time. Future research should investigate how versioning on the user-level could be implemented. Especially interesting would be handling of schema changes as users are not isolated from each other in contrast to the isolation between tenants.
 
 \paragraph{Caching} To build a SaaS that is able to serve many users, caching is an essential technique. In our research we omitted caching. It would be interesting to investigate caching more with regards to versioning, especially if cached objects have to be invalidated during version changes or not.
 
-\vspace{4 mm}
-
-One of our insights from Section~\ref{sec:database} was that versioning with schema changes can currently not be implemented as a concern on the data storage layer, but has to be handled by the application layer. Depending on the implementation this might also mean that the schema is not kept by the DBMS anymore, but rather by the application layer. This might lead to the DBMS not benefiting from mechanisms like indices or caching anymore, which impedes the performance of the DBMS.
-
-We believe that further research in the direction of version-aware database management systems could be interesting future work. An example would be that the application could specify via a SQL extension which version of a table they want to access. The DBMS would then take care of loading the correct schema as well as arrange the base data itself, thus relieving the application layer of that concern.
+\paragraph{} One of our insights from Section~\ref{sec:database} was that versioning with schema changes can currently not be implemented as a concern on the database layer, but instead has to be handled in the application layer. Depending on the implementation this might also mean that the schema is not kept by the DBMS anymore, but rather by the application layer. This might lead to the application not benefiting from DBMS mechanisms like indices or caching anymore. We believe that further research in the direction of version-aware database management systems could be interesting for future work. An example would be that the applications could specify via a SQL extension which version of a table they want to access. The DBMS would then take care of using the correct schema as well as arrange the base data itself, thus relieving the application layer of that concern.
