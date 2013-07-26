@@ -98,7 +98,7 @@ For versioning the back end layer we explore two variants: \emph{1:1} and \emph{
 
 The \emph{1:1 mapping} depicts that each product version is mapped to one code revision. Figure~\ref{fig:sharedinstance11} shows the architecture. Thus to support different product versions at the same time, the respective code revisions have to be deployed on different back end servers. On each request, the user management decides to which back end servers the request is routed, depending on the tenant the user belongs to.
 
-The benefit of this approach is, that the versioning is happening outside of the application code, thus the code does not have to be version-aware. On the downsides, the consolidation factor of this approach is low, given that the load is split between non-consolidateable versions. This defecit increases with the increase of versions running in parallel. Furthermore this leads to a heterogeneous deployment which is more complex than a homogeneous deployment.  Also this can lead to problems like bugfixes, that if written once have to be merged and deployed into every running version. Also this approach needs an intelligent routing layer (in our example above the user management) which decides on which app server to map which request.
+The benefit of this approach is, that the versioning is happening outside of the application code, thus the code does not have to be version-aware. On the downsides, the consolidation factor of this approach is low, given that the load is split between non-consolidateable versions. This deficit increases with the increase of versions running in parallel. Furthermore this leads to a heterogeneous deployment which is more complex than a homogeneous deployment.  Also this can lead to problems like bugfixes, that if written once have to be merged and deployed into every running version. Also this approach needs an intelligent routing layer (in our example above the user management) which decides on which app server to map which request.
 
 % a product ver = code rev
 %
@@ -177,11 +177,11 @@ Since the database layer can not handle the versioning concern, the responsibili
 
 To store different schemas, a new database or table can be created for each version. An example with different tables can be seen in Listing~\ref{differenttablessql}. Each tenant is on a specific version, thus their data is stored in the corresponding table for their respective version.
 
-\lstset{language=SQL, caption=sql, label=differenttablessql}
+\lstset{language=SQL, caption=Example SQL code to create queries for supporting three versions of the users table at the same time, label=differenttablessql}
 \begin{lstlisting}
-  create table users_v1;
-  create table users_v2;
-  create table users_v3;
+  CREATE TABLE users_v1(id int(11));
+  CREATE TABLE users_v2(id int(11), username varchar(150));
+  CREATE TABLE users_v3(id int(11), user_name varchar(200));
 \end{lstlisting}
 
 The problem with approach is that migrations between versions require moving the data of a whole tenant from the tables of one version to the tables of another version. This might include columns or even whole tables that were not changed between versions. This copying introduces a significant overhead which  current DBMS are not optimized for.
