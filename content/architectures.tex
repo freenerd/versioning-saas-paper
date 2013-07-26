@@ -206,7 +206,8 @@ Pivot tables as explained in \cite{Yaish2011} \cite{Aulbach2011} \cite{Weissman2
 
 When a tenant decides to move to a new version and the new version requires a schema change, then the data of the tenant has to be migrated from the old to the new schema. Next we will describe two ways for running these migrations:
 
-\paragraph{Batch-processing migration} The data is migrated in one go. Depending on the database management system, the schema changes and the amount of data, this process might take significant time. Depending on the algorithm used to execute the migration, the database and therefore the whole application might be completely unavailable or in read-only state for the tenant's users during the migration.
+\paragraph{Batch-processing migration} The data is migrated in one go. Depending on the database management system, the schema changes and the amount of data, this process might take significant time. Depending on the algorithm used to execute the migration, the database and therefore the whole application might be completely unavailable or in read-only state for the tenant's users during the migration. An example for a migration process that has low interfere with the operations of the application is presented in~\cite{Keddo}.
+
 %TODO TO TALK ABOUT
 \paragraph{On-the-fly migration} The data is migrated when it is requested or written. This could mean that clusters of data are migrated in batch (e.g. a user is migrated when she logs in) or are migrated row-by-row.
 
